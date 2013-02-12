@@ -1,0 +1,46 @@
+/* line 1, jquery.group.sass */
+.jqgroup {
+  width: 100%;
+  background-color: red;
+  display: inline-block;
+}
+/* line 5, jquery.group.sass */
+.jqgroup .standings {
+  float: left;
+  background-color: #cccccc;
+  width: 20%;
+}
+/* line 9, jquery.group.sass */
+.jqgroup .rounds {
+  float: left;
+  background-color: #999999;
+  width: 80%;
+}
+/* line 13, jquery.group.sass */
+.jqgroup .unassigned {
+  float: left;
+  position: relative;
+  background-color: #aaaaaa;
+  width: 80%;
+  margin-left: 20%;
+}
+/* line 19, jquery.group.sass */
+.jqgroup .participant {
+  background-color: #eeeeee;
+}
+/* line 21, jquery.group.sass */
+.jqgroup .match {
+  float: left;
+  background-color: #bbbbbb;
+  border: 1px outset #666666;
+  padding: 3px 10px;
+  margin: 2px;
+}
+/* line 27, jquery.group.sass */
+.jqgroup .round {
+  width: 25%;
+  background-color: #888888;
+  float: left;
+  height: 200px;
+  display: inline-block;
+}
