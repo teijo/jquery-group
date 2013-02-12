@@ -5,7 +5,6 @@ $(function() {
       return [it, it2]
     }).value()
   }).flatten(true)
-  console.log(pairs)
   var $container = $('<div class="jqgroup"></div>').appendTo('#container')
   var templates = (function() {
     var standingsMarkup = Handlebars.compile(
@@ -17,16 +16,33 @@ $(function() {
     var participantMarkup = Handlebars.compile(
       '<div class="participant">{{this}}</div>')
     var matchMarkup = Handlebars.compile(
-      '<div class="match">{{home}} - {{away}}</div>')
+      '<div data-id="{{id}}" class="match" draggable="true">{{home}} - {{away}}</div>')
     var roundMarkup = Handlebars.compile(
-      '<div class="round">Round {{this}}</div>')
+      '<div class="round"><header>Round {{this}}</header></div>')
+    var id=0
     return {
       standings: $(standingsMarkup()),
       rounds: $(roundsMarkup()),
       unassigned: $(unassignedMarkup()),
       participant: function(p) { return $(participantMarkup(p)) },
-      match: function(match) { return $(matchMarkup(match)) },
-      round: function(round) { return $(roundMarkup(round)) }
+      match: function(match) {
+        match.id = ++id
+        var m = $(matchMarkup(match))
+        m.asEventStream('dragstart').map(function(ev) { return ev.originalEvent }).onValue(function(ev) {
+          ev.dataTransfer.setData('Text', match.id)
+        })
+        return m
+      },
+      round: function(round) {
+        var r = $(roundMarkup(round))
+        r.asEventStream('dragover').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) { })
+        r.asEventStream('drop').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
+          var id = ev.originalEvent.dataTransfer.getData('Text')
+          var obj = $('[data-id="'+id+'"]')
+          $(ev.target).append(obj)
+        })
+        return r
+      }
     }
   })()
   var standings = templates.standings.appendTo($container)

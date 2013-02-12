@@ -44,3 +44,7 @@
   height: 200px;
   display: inline-block;
 }
+/* line 33, jquery.group.sass */
+.jqgroup .round header {
+  display: block;
+}
