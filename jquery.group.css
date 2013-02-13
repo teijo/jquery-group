@@ -1,22 +1,27 @@
-/* line 1, jquery.group.sass */
 .jqgroup {
   width: 100%;
   background-color: red;
   display: inline-block;
 }
-/* line 5, jquery.group.sass */
 .jqgroup .standings {
   float: left;
   background-color: #cccccc;
   width: 20%;
 }
-/* line 9, jquery.group.sass */
+.jqgroup .standings table {
+  width: 100%;
+}
+.jqgroup .standings td:not(:first-child) {
+  text-align: center;
+}
+.jqgroup .standings th:first-child {
+  text-align: left;
+}
 .jqgroup .rounds {
   float: left;
   background-color: #999999;
   width: 80%;
 }
-/* line 13, jquery.group.sass */
 .jqgroup .unassigned {
   float: left;
   position: relative;
@@ -24,11 +29,9 @@
   width: 80%;
   margin-left: 20%;
 }
-/* line 19, jquery.group.sass */
 .jqgroup .participant {
   background-color: #eeeeee;
 }
-/* line 21, jquery.group.sass */
 .jqgroup .match {
   float: left;
   background-color: #bbbbbb;
@@ -37,18 +40,15 @@
   margin: 2px;
   text-align: center;
 }
-/* line 28, jquery.group.sass */
 .jqgroup .match input {
   width: 2em;
   border: none;
   border-radius: 2px;
   margin: 2px;
 }
-/* line 33, jquery.group.sass */
 .jqgroup .match span.name {
   margin: 2px;
 }
-/* line 35, jquery.group.sass */
 .jqgroup .round {
   width: 25%;
   background-color: #888888;
@@ -56,19 +56,15 @@
   height: 200px;
   display: inline-block;
 }
-/* line 41, jquery.group.sass */
 .jqgroup .round.droppable {
   background-color: #88cc88;
 }
-/* line 43, jquery.group.sass */
 .jqgroup .round.droppable.over {
   background-color: #88ff88;
 }
-/* line 45, jquery.group.sass */
 .jqgroup .round .match {
   float: none;
 }
-/* line 47, jquery.group.sass */
 .jqgroup .round header {
   display: block;
 }
