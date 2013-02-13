@@ -1,3 +1,26 @@
+function makeStandings(participants, pairs) {
+  return participants.map(function(it) {
+    var matches = pairs
+      .filter(function(match) { return match.home === it || match.away === it })
+      .map(function(match) {
+        if (match.home === it)
+          return { ownScore: match.homeScore, opponentScore: match.awayScore }
+        else
+          return { ownScore: match.awayScore, opponentScore: match.homeScore }
+      })
+    var wins = matches.filter(function(match) { return (match.ownScore > match.opponentScore) }).size()
+    var losses = matches.filter(function(match) { return (match.ownScore < match.opponentScore) }).size()
+    var ties = matches.filter(function(match) { return (match.ownScore == match.opponentScore) }).size()
+    return {
+      name: it,
+      wins: wins,
+      losses: losses,
+      ties: ties,
+      points: wins * 3 + ties
+    }
+  }).sortBy(function(it) { return -it.points })
+}
+
 $(function() {
   var participants = _(["a", "b", "c", "d", "e"])
   var pairs = participants.map(function(it, i) {
@@ -8,10 +31,14 @@ $(function() {
   var $container = $('<div class="jqgroup"></div>').appendTo('#container')
   var templates = (function() {
     var standingsMarkup = Handlebars.compile(
-      '<div class="standings">Standings'
+      '<div class="standings">'
+      +'Standings'
+      +'<table>'
+      +'<tr><th>Name</th><th>W</th><th>L</th><th>T</th><th>P</tr>'
       +'{{#each this}}'
-      +'<div class="participant">{{this}}</div>'
+      +'<tr><td>{{name}}</td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>'
       +'{{/each}}'
+      +'</table>'
       +'</div>')
     var roundsMarkup = Handlebars.compile(
       '<div class="rounds"></div>')
@@ -59,7 +86,8 @@ $(function() {
       }
     }
   })()
-  templates.standings(participants.value()).appendTo($container)
+  var standings = makeStandings(participants, pairs)
+  templates.standings(standings.value()).appendTo($container)
   var rounds = templates.rounds.appendTo($container)
   _([1, 2, 3, 4]).each(function(it) {
     rounds.append(templates.round(it))
