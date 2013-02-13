@@ -35,8 +35,20 @@
   border: 1px outset #666666;
   padding: 3px 10px;
   margin: 2px;
+  text-align: center;
 }
-/* line 27, jquery.group.sass */
+/* line 28, jquery.group.sass */
+.jqgroup .match input {
+  width: 2em;
+  border: none;
+  border-radius: 2px;
+  margin: 2px;
+}
+/* line 33, jquery.group.sass */
+.jqgroup .match span.name {
+  margin: 2px;
+}
+/* line 35, jquery.group.sass */
 .jqgroup .round {
   width: 25%;
   background-color: #888888;
@@ -44,19 +56,19 @@
   height: 200px;
   display: inline-block;
 }
-/* line 33, jquery.group.sass */
+/* line 41, jquery.group.sass */
 .jqgroup .round.droppable {
   background-color: #88cc88;
 }
-/* line 35, jquery.group.sass */
+/* line 43, jquery.group.sass */
 .jqgroup .round.droppable.over {
   background-color: #88ff88;
 }
-/* line 37, jquery.group.sass */
+/* line 45, jquery.group.sass */
 .jqgroup .round .match {
   float: none;
 }
-/* line 39, jquery.group.sass */
+/* line 47, jquery.group.sass */
 .jqgroup .round header {
   display: block;
 }

@@ -45,7 +45,12 @@ $(function() {
     var unassignedMarkup = Handlebars.compile(
       '<div class="unassigned"></div>')
     var matchMarkup = Handlebars.compile(
-      '<div data-id="{{id}}" class="match" draggable="true">{{home}} : {{homeScore}} - {{awayScore}} : {{away}}</div>')
+      '<div data-id="{{id}}" class="match" draggable="true">'
+      +'<span class="name">{{home}}</span>'
+      +'<input value="{{homeScore}}" />'
+      +'<input value="{{awayScore}}" />'
+      +'<span>{{away}}</span>'
+      +'</div>')
     var roundMarkup = Handlebars.compile(
       '<div class="round"><header>Round {{this}}</header></div>')
     var id=0
