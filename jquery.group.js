@@ -2,29 +2,30 @@ $(function() {
   var participants = _(["a", "b", "c", "d", "e"])
   var pairs = participants.map(function(it, i) {
     return participants.filter(function(_, j) { return j < i }).map(function(it2) {
-      return { home: it, homeScore: 0, away: it2, awayScore: 0 }
+      return { home: it, homeScore: ~~(Math.random()*10)%10, away: it2, awayScore: ~~(Math.random()*10)%10 }
     }).value()
   }).flatten(true)
   var $container = $('<div class="jqgroup"></div>').appendTo('#container')
   var templates = (function() {
     var standingsMarkup = Handlebars.compile(
-      '<div class="standings">Standings</div>')
+      '<div class="standings">Standings'
+      +'{{#each this}}'
+      +'<div class="participant">{{this}}</div>'
+      +'{{/each}}'
+      +'</div>')
     var roundsMarkup = Handlebars.compile(
       '<div class="rounds"></div>')
     var unassignedMarkup = Handlebars.compile(
       '<div class="unassigned"></div>')
-    var participantMarkup = Handlebars.compile(
-      '<div class="participant">{{this}}</div>')
     var matchMarkup = Handlebars.compile(
       '<div data-id="{{id}}" class="match" draggable="true">{{home}} : {{homeScore}} - {{awayScore}} : {{away}}</div>')
     var roundMarkup = Handlebars.compile(
       '<div class="round"><header>Round {{this}}</header></div>')
     var id=0
     return {
-      standings: $(standingsMarkup()),
+      standings: function(participants) { return $(standingsMarkup(participants)) },
       rounds: $(roundsMarkup()),
       unassigned: $(unassignedMarkup()),
-      participant: function(p) { return $(participantMarkup(p)) },
       match: function(match) {
         match.id = ++id
         var m = $(matchMarkup(match))
@@ -58,10 +59,7 @@ $(function() {
       }
     }
   })()
-  var standings = templates.standings.appendTo($container)
-  participants.each(function(it) {
-    standings.append(templates.participant(it))
-  })
+  templates.standings(participants.value()).appendTo($container)
   var rounds = templates.rounds.appendTo($container)
   _([1, 2, 3, 4]).each(function(it) {
     rounds.append(templates.round(it))
