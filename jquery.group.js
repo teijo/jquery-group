@@ -30,16 +30,29 @@ $(function() {
         var m = $(matchMarkup(match))
         m.asEventStream('dragstart').map(function(ev) { return ev.originalEvent }).onValue(function(ev) {
           ev.dataTransfer.setData('Text', match.id)
+          m.css('opacity', 0.5)
+          $('.round').addClass('droppable')
+        })
+        m.asEventStream('dragend').map(function(ev) { return ev.originalEvent }).onValue(function(ev) {
+          m.css('opacity', 1.0)
+          $('.round').removeClass('droppable')
         })
         return m
       },
       round: function(round) {
         var r = $(roundMarkup(round))
         r.asEventStream('dragover').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) { })
+        r.asEventStream('dragenter').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
+          r.addClass('over')
+        })
+        r.asEventStream('dragleave').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
+          r.removeClass('over')
+        })
         r.asEventStream('drop').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
           var id = ev.originalEvent.dataTransfer.getData('Text')
           var obj = $('[data-id="'+id+'"]')
           $(ev.target).append(obj)
+          r.removeClass('over')
         })
         return r
       }
