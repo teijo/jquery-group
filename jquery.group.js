@@ -2,7 +2,7 @@ $(function() {
   var participants = _(["a", "b", "c", "d", "e"])
   var pairs = participants.map(function(it, i) {
     return participants.filter(function(_, j) { return j < i }).map(function(it2) {
-      return [it, it2]
+      return { home: it, homeScore: 0, away: it2, awayScore: 0 }
     }).value()
   }).flatten(true)
   var $container = $('<div class="jqgroup"></div>').appendTo('#container')
@@ -16,7 +16,7 @@ $(function() {
     var participantMarkup = Handlebars.compile(
       '<div class="participant">{{this}}</div>')
     var matchMarkup = Handlebars.compile(
-      '<div data-id="{{id}}" class="match" draggable="true">{{home}} - {{away}}</div>')
+      '<div data-id="{{id}}" class="match" draggable="true">{{home}} : {{homeScore}} - {{awayScore}} : {{away}}</div>')
     var roundMarkup = Handlebars.compile(
       '<div class="round"><header>Round {{this}}</header></div>')
     var id=0
@@ -68,6 +68,6 @@ $(function() {
   })
   var unassigned = templates.unassigned.appendTo($container)
   pairs.each(function(it) {
-    unassigned.append(templates.match({ home: it[0], away: it[1] }))
+    unassigned.append(templates.match(it))
   })
 })
