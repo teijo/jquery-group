@@ -60,14 +60,14 @@ $(function() {
         return new function() {
           var r = $(template(round))
           this.markup = r
-          r.asEventStream('dragover').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) { })
-          r.asEventStream('dragenter').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
+          r.asEventStream('dragover').doAction('.preventDefault').onValue(function(ev) { })
+          r.asEventStream('dragenter').doAction('.preventDefault').onValue(function(ev) {
             r.addClass('over')
           })
-          r.asEventStream('dragleave').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
+          r.asEventStream('dragleave').doAction('.preventDefault').onValue(function(ev) {
             r.removeClass('over')
           })
-          r.asEventStream('drop').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
+          r.asEventStream('drop').doAction('.preventDefault').onValue(function(ev) {
             var id = ev.originalEvent.dataTransfer.getData('Text')
             var obj = $('[data-id="'+id+'"]')
             $(ev.target).append(obj)
