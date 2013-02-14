@@ -44,28 +44,36 @@ $(function() {
       '<div class="rounds"></div>')
     var unassignedMarkup = Handlebars.compile(
       '<div class="unassigned"></div>')
-    var roundMarkup = Handlebars.compile(
-      '<div class="round"><header>Round {{this}}</header></div>')
     return {
       standings: function(participants) { return $(standingsMarkup(participants.value())) },
       rounds: $(roundsMarkup()),
-      unassigned: $(unassignedMarkup()),
-      round: function(round) {
-        var r = $(roundMarkup(round))
-        r.asEventStream('dragover').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) { })
-        r.asEventStream('dragenter').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
-          r.addClass('over')
-        })
-        r.asEventStream('dragleave').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
-          r.removeClass('over')
-        })
-        r.asEventStream('drop').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
-          var id = ev.originalEvent.dataTransfer.getData('Text')
-          var obj = $('[data-id="'+id+'"]')
-          $(ev.target).append(obj)
-          r.removeClass('over')
-        })
-        return r
+      unassigned: $(unassignedMarkup())
+    }
+  })()
+
+  var Round = (function() {
+    var template = Handlebars.compile(
+      '<div class="round"><header>Round {{this}}</header></div>')
+
+    return {
+      create: function(round) {
+        return new function() {
+          var r = $(template(round))
+          this.markup = r
+          r.asEventStream('dragover').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) { })
+          r.asEventStream('dragenter').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
+            r.addClass('over')
+          })
+          r.asEventStream('dragleave').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
+            r.removeClass('over')
+          })
+          r.asEventStream('drop').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) {
+            var id = ev.originalEvent.dataTransfer.getData('Text')
+            var obj = $('[data-id="'+id+'"]')
+            $(ev.target).append(obj)
+            r.removeClass('over')
+          })
+        }
       }
     }
   })()
@@ -119,7 +127,7 @@ $(function() {
   $('<div class="standings"></div>').appendTo($container)
   var rounds = templates.rounds.appendTo($container)
   _([1, 2, 3, 4]).each(function(it) {
-    rounds.append(templates.round(it))
+    rounds.append(Round.create(it).markup)
   })
   var unassigned = templates.unassigned.appendTo($container)
   var properties = []
