@@ -44,47 +44,12 @@ $(function() {
       '<div class="rounds"></div>')
     var unassignedMarkup = Handlebars.compile(
       '<div class="unassigned"></div>')
-    var matchMarkup = Handlebars.compile(
-      '<div data-id="{{id}}" class="match" draggable="true">'
-      +'<span class="home">{{home}}</span>'
-      +'<input class="home" value="{{homeScore}}" />'
-      +'<input class="away" value="{{awayScore}}" />'
-      +'<span class="away">{{away}}</span>'
-      +'</div>')
     var roundMarkup = Handlebars.compile(
       '<div class="round"><header>Round {{this}}</header></div>')
-    var id=0
     return {
       standings: function(participants) { return $(standingsMarkup(participants.value())) },
       rounds: $(roundsMarkup()),
       unassigned: $(unassignedMarkup()),
-      match: function(match) {
-        match.id = ++id
-        var m = $(matchMarkup(match))
-
-        var scoreChanges = m.find('input').asEventStream('change').map(function(ev) { return $(ev.target) })
-        var matchProp = Bacon.combineTemplate({
-          home: match.home,
-          homeScore: scoreChanges.filter(function(it) { return it.hasClass('home') })
-            .map(function(it) { return it.val() })
-            .toProperty(match.homeScore),
-          away: match.away,
-          awayScore: scoreChanges.filter(function(it) { return it.hasClass('away') })
-            .map(function(it) { return it.val() })
-            .toProperty(match.awayScore)
-        })
-
-        m.asEventStream('dragstart').map(function(ev) { return ev.originalEvent }).onValue(function(ev) {
-          ev.dataTransfer.setData('Text', match.id)
-          m.css('opacity', 0.5)
-          $('.round').addClass('droppable')
-        })
-        m.asEventStream('dragend').map(function(ev) { return ev.originalEvent }).onValue(function(ev) {
-          m.css('opacity', 1.0)
-          $('.round').removeClass('droppable')
-        })
-        return { template: m, property: matchProp }
-      },
       round: function(round) {
         var r = $(roundMarkup(round))
         r.asEventStream('dragover').map(function(ev) { ev.preventDefault(); return ev }).onValue(function(ev) { })
@@ -104,6 +69,53 @@ $(function() {
       }
     }
   })()
+
+  var Match = (function() {
+    var id = 0
+    var template = Handlebars.compile(
+      '<div data-id="{{id}}" class="match" draggable="true">'
+      +'<span class="home">{{home}}</span>'
+      +'<input class="home" value="{{homeScore}}" />'
+      +'<input class="away" value="{{awayScore}}" />'
+      +'<span class="away">{{away}}</span>'
+      +'</div>')
+
+    return {
+      create: function(match) {
+        return new function() {
+          var that = this
+          match.id = ++id
+          var markup = $(template(match))
+          this.markup = markup
+
+          var scoreChanges = markup.find('input').asEventStream('change').map(function(ev) { return $(ev.target) })
+
+          this.property = Bacon.combineTemplate({
+            home: match.home,
+            homeScore: scoreChanges.filter(function(it) { return it.hasClass('home') })
+              .map(function(it) { return it.val() })
+              .toProperty(match.homeScore),
+            away: match.away,
+            awayScore: scoreChanges.filter(function(it) { return it.hasClass('away') })
+              .map(function(it) { return it.val() })
+              .toProperty(match.awayScore)
+          })
+
+          markup.asEventStream('dragstart').map(function(ev) { return ev.originalEvent }).onValue(function(ev) {
+            ev.dataTransfer.setData('Text', match.id)
+            markup.css('opacity', 0.5)
+            $('.round').addClass('droppable')
+          })
+
+          markup.asEventStream('dragend').map(function(ev) { return ev.originalEvent }).onValue(function(ev) {
+            markup.css('opacity', 1.0)
+            $('.round').removeClass('droppable')
+          })
+        }
+      }
+    }
+  })()
+
   $('<div class="standings"></div>').appendTo($container)
   var rounds = templates.rounds.appendTo($container)
   _([1, 2, 3, 4]).each(function(it) {
@@ -112,9 +124,9 @@ $(function() {
   var unassigned = templates.unassigned.appendTo($container)
   var properties = []
   pairs.each(function(it) {
-    var match = templates.match(it)
+    var match = Match.create(it)
     properties.push(match.property)
-    unassigned.append(match.template)
+    unassigned.append(match.markup)
   })
   var state = Bacon.combineAsArray(properties)
   state.onValue(function(val) {
