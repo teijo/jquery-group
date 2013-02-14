@@ -109,13 +109,13 @@ $(function() {
               .toProperty(match.awayScore)
           })
 
-          markup.asEventStream('dragstart').map(function(ev) { return ev.originalEvent }).onValue(function(ev) {
+          markup.asEventStream('dragstart').map(".originalEvent").onValue(function(ev) {
             ev.dataTransfer.setData('Text', match.id)
             markup.css('opacity', 0.5)
             $('.round').addClass('droppable')
           })
 
-          markup.asEventStream('dragend').map(function(ev) { return ev.originalEvent }).onValue(function(ev) {
+          markup.asEventStream('dragend').map(".originalEvent").onValue(function(ev) {
             markup.css('opacity', 1.0)
             $('.round').removeClass('droppable')
           })
