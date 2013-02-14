@@ -55,7 +55,7 @@ $(function() {
       '<div class="round"><header>Round {{this}}</header></div>')
     var id=0
     return {
-      standings: function(participants) { return $(standingsMarkup(participants)) },
+      standings: function(participants) { return $(standingsMarkup(participants.value())) },
       rounds: $(roundsMarkup()),
       unassigned: $(unassignedMarkup()),
       match: function(match) {
@@ -118,7 +118,6 @@ $(function() {
   })
   var state = Bacon.combineAsArray(properties)
   state.onValue(function(val) {
-    var standings = makeStandings(participants, _(val))
-    $('.standings').replaceWith(templates.standings(standings.value()))
+    $('.standings').replaceWith(templates.standings(makeStandings(participants, _(val))))
   })
 })
