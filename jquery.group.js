@@ -96,15 +96,15 @@ $(function() {
           var markup = $(template(match))
           this.markup = markup
 
-          var scoreChanges = markup.find('input').asEventStream('change').map(function(ev) { return $(ev.target) })
+          var scoreChanges = markup.find('input').asEventStream('change').map('.target').map($)
 
           this.property = Bacon.combineTemplate({
             home: match.home,
-            homeScore: scoreChanges.filter(function(it) { return it.hasClass('home') })
+            homeScore: scoreChanges.filter('.hasClass', 'home')
               .map(function(it) { return it.val() })
               .toProperty(match.homeScore),
             away: match.away,
-            awayScore: scoreChanges.filter(function(it) { return it.hasClass('away') })
+            awayScore: scoreChanges.filter('.hasClass', 'away')
               .map(function(it) { return it.val() })
               .toProperty(match.awayScore)
           })
