@@ -1,4 +1,5 @@
-function makeStandings(participants, pairs) {
+function makeStandings(pairs) {
+  var participants = pairs.pluck('home').union(pairs.pluck('away').value())
   return participants.map(function(it) {
     var matches = pairs
       .filter(function(match) { return match.home === it || match.away === it })
@@ -142,6 +143,6 @@ $(function() {
   })
   var state = Bacon.combineAsArray(properties)
   state.onValue(function(val) {
-    $('.standings').replaceWith(templates.standings(makeStandings(participants, _(val))))
+    $('.standings').replaceWith(templates.standings(makeStandings(_(val))))
   })
 })
