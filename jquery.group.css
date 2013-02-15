@@ -17,6 +17,18 @@
 .jqgroup .standings th:first-child {
   text-align: left;
 }
+.jqgroup .standings input {
+  border: none;
+  width: 100%;
+  background: transparent;
+}
+.jqgroup .standings input:hover {
+  background: #999999;
+}
+.jqgroup .standings input:focus {
+  color: white;
+  background: #666666;
+}
 .jqgroup .rounds {
   float: left;
   background-color: #999999;
