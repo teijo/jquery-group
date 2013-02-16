@@ -81,17 +81,13 @@ $(function() {
           var r = $(template(round))
           this.markup = r
           r.asEventStream('dragover').doAction('.preventDefault').onValue(function(ev) { })
-          r.asEventStream('dragenter').doAction('.preventDefault').onValue(function(ev) {
-            r.addClass('over')
-          })
-          r.asEventStream('dragleave').doAction('.preventDefault').onValue(function(ev) {
-            r.removeClass('over')
-          })
+          r.asEventStream('dragenter').doAction('.preventDefault').onValue(function(ev) { $(ev.target).addClass('over') })
+          r.asEventStream('dragleave').doAction('.preventDefault').onValue(function(ev) { $(ev.target).removeClass('over') })
           r.asEventStream('drop').doAction('.preventDefault').onValue(function(ev) {
             var id = ev.originalEvent.dataTransfer.getData('Text')
             var obj = $('[data-id="'+id+'"]')
             $(ev.target).append(obj)
-            r.removeClass('over')
+            $(ev.target).removeClass('over')
           })
         }
       }
@@ -124,12 +120,12 @@ $(function() {
 
           markup.asEventStream('dragstart').map(".originalEvent").onValue(function(ev) {
             ev.dataTransfer.setData('Text', match.id)
-            markup.css('opacity', 0.5)
+            $(ev.target).css('opacity', 0.5)
             $('.round').addClass('droppable')
           })
 
           markup.asEventStream('dragend').map(".originalEvent").onValue(function(ev) {
-            markup.css('opacity', 1.0)
+            $(ev.target).css('opacity', 1.0)
             $('.round').removeClass('droppable')
           })
         }
