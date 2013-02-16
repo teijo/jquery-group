@@ -113,7 +113,7 @@ $(function() {
         return new function() {
           var that = this
           match.id = ++id
-          var markup = $(template({ home: match[0].name, homeScore: match[0].score, away: match[1].name, awayScore: match[1].score }))
+          var markup = $(template({ id: match.id, home: match[0].name, homeScore: match[0].score, away: match[1].name, awayScore: match[1].score }))
           this.markup = markup
 
           markup.find('input').asEventStream('change').onValue(function() {
