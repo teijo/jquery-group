@@ -30,16 +30,15 @@
   text-align: left;
 }
 .jqgroup .rounds {
-  float: left;
+  float: right;
   background-color: #999999;
   width: 80%;
 }
 .jqgroup .unassigned {
-  float: left;
+  float: right;
   position: relative;
   background-color: #aaaaaa;
   width: 80%;
-  margin-left: 20%;
 }
 .jqgroup .participant {
   background-color: #eeeeee;
