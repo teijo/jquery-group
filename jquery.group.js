@@ -40,7 +40,7 @@ $(function() {
       +'</colgroup>'
       +'<tr><th>Name</th><th>W</th><th>L</th><th>T</th><th>P</tr>'
       +'{{#each this}}'
-      +'<tr><td><input class=="name" value="{{name}}" /></td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>'
+      +'<tr><td><input class="name" data-prev="{{name}}" value="{{name}}" /></td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>'
       +'{{/each}}'
       +'</table>'
       +'<input class="add" value="{{name}}" /><input type="submit" value="Add" />'
@@ -50,8 +50,15 @@ $(function() {
     var unassignedMarkup = Handlebars.compile(
       '<div class="unassigned"></div>')
     return {
-      standings: function(participantStream, participants) {
+      standings: function(participantStream, renameStream, participants) {
         var markup = $(standingsMarkup(participants.value()))
+        markup.find('input.name').asEventStream('change')
+          .map('.target')
+          .map($)
+          .onValue(function(el) {
+            renameStream.push({ from: el.attr('data-prev'), to: el.val() })
+            el.attr('data-prev', el.val())
+          })
         markup.find('input.add').asEventStream('change')
           .map('.target')
           .map($)
@@ -106,22 +113,13 @@ $(function() {
         return new function() {
           var that = this
           match.id = ++id
-          var markup = $(template(match))
+          var markup = $(template({ home: match[0].name, homeScore: match[0].score, away: match[1].name, awayScore: match[1].score }))
           this.markup = markup
 
-          var scoreChanges = markup.find('input').asEventStream('change').map('.target').map($)
-
-          this.property = Bacon.combineTemplate({
-            homeScore: scoreChanges.filter('.hasClass', 'home')
-              .map(function(it) { return it.val() })
-              .toProperty(match.homeScore),
-            awayScore: scoreChanges.filter('.hasClass', 'away')
-              .map(function(it) { return it.val() })
-              .toProperty(match.awayScore)
-          })
-
-          this.property.onValue(function(result) {
-            resultStream.push([ { name: match.home, score: result.homeScore }, { name: match.away, score: result.awayScore } ])
+          markup.find('input').asEventStream('change').onValue(function() {
+            var update = [ { name: match[0].name, score: parseInt(markup.find('input.home').val()) },
+                           { name: match[1].name, score: parseInt(markup.find('input.away').val()) } ]
+            resultStream.push(update)
           })
 
           markup.asEventStream('dragstart').map(".originalEvent").onValue(function(ev) {
@@ -189,12 +187,8 @@ $(function() {
   var result = Bacon.mergeAll([participantAdds, resultUpdates, participantRenames])
   result.throttle(10).onValue(function() { console.log('New state created'); console.log(arguments) })
 
-  participants.each(function(it) { participantStream.push(it) })
-
-  //renameStream.push({ from: 'b', to: 'e' })
-
-  resultUpdates.throttle(10).onValue(function(state) {
-    $('.standings').replaceWith(templates.standings(participantStream, makeStandings(state.participants, state.matches)))
+  participantAdds.merge(resultUpdates).throttle(10).onValue(function(state) {
+    $('.standings').replaceWith(templates.standings(participantStream, renameStream, makeStandings(state.participants, state.matches)))
   })
 
   $('<div class="standings"></div>').appendTo($container)
@@ -202,8 +196,15 @@ $(function() {
   _([1, 2, 3, 4]).each(function(it) {
     rounds.append(Round.create(it).markup)
   })
+
   var unassigned = templates.unassigned.appendTo($container)
-  pairs.each(function(it) {
-    unassigned.append(Match.create(resultStream, it).markup)
+  participantRenames.merge(participantAdds).merge(resultUpdates).onValue(function(state) {
+    $('.match').remove()
+    state.matches.each(function(it) {
+      unassigned.append(Match.create(resultStream, it).markup)
+    })
   })
+
+  participants.each(function(it) { participantStream.push(it) })
+  pairs.each(function(it) { resultStream.push([ { name: it.home, score: it.homeScore }, { name: it.away, score: it.awayScore } ]) })
 })
