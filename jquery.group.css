@@ -11,23 +11,23 @@
 .jqgroup .standings table {
   width: 100%;
 }
+.jqgroup .standings table input {
+  border: none;
+  width: 100%;
+  background: transparent;
+}
+.jqgroup .standings table input:hover {
+  background: #999999;
+}
+.jqgroup .standings table input:focus {
+  color: white;
+  background: #666666;
+}
 .jqgroup .standings td:not(:first-child) {
   text-align: center;
 }
 .jqgroup .standings th:first-child {
   text-align: left;
-}
-.jqgroup .standings input {
-  border: none;
-  width: 100%;
-  background: transparent;
-}
-.jqgroup .standings input:hover {
-  background: #999999;
-}
-.jqgroup .standings input:focus {
-  color: white;
-  background: #666666;
 }
 .jqgroup .rounds {
   float: left;
