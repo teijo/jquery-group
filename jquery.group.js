@@ -1,3 +1,8 @@
+function toIntOrNull(string) {
+  var value = parseInt(string)
+  return isNaN(value) ? null : value
+}
+
 function makeStandings(participants, pairs) {
   return participants.map(function(it) {
     var matches = pairs
@@ -113,8 +118,8 @@ $(function() {
           this.markup = markup
 
           markup.find('input').asEventStream('change').onValue(function() {
-            var update = { a: { name: match.a.name, score: parseInt(markup.find('input.home').val()) },
-                           b: { name: match.b.name, score: parseInt(markup.find('input.away').val()) } }
+            var update = { a: { name: match.a.name, score: toIntOrNull(markup.find('input.home').val()) },
+                           b: { name: match.b.name, score: toIntOrNull(markup.find('input.away').val()) } }
             resultStream.push(update)
           })
 
