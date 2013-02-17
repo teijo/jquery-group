@@ -1,12 +1,12 @@
 function makeStandings(participants, pairs) {
   return participants.map(function(it) {
     var matches = pairs
-      .filter(function(match) { return match[0].name === it || match[1].name === it })
+      .filter(function(match) { return match.a.name === it || match.b.name === it })
       .map(function(match) {
-        if (match[0].name === it)
-          return { ownScore: match[0].score, opponentScore: match[1].score }
+        if (match.a.name === it)
+          return { ownScore: match.a.score, opponentScore: match.b.score }
         else
-          return { ownScore: match[1].score, opponentScore: match[0].score }
+          return { ownScore: match.b.score, opponentScore: match.a.score }
       })
     var wins = matches.filter(function(match) { return (match.ownScore > match.opponentScore) }).size()
     var losses = matches.filter(function(match) { return (match.ownScore < match.opponentScore) }).size()
@@ -108,13 +108,12 @@ $(function() {
       create: function(resultStream, match) {
         return new function() {
           var that = this
-          match.id = ++id
-          var markup = $(template({ id: match.id, home: match[0].name, homeScore: match[0].score, away: match[1].name, awayScore: match[1].score }))
+          var markup = $(template({ id: match.id, home: match.a.name, homeScore: match.a.score, away: match.b.name, awayScore: match.b.score }))
           this.markup = markup
 
           markup.find('input').asEventStream('change').onValue(function() {
-            var update = [ { name: match[0].name, score: parseInt(markup.find('input.home').val()) },
-                           { name: match[1].name, score: parseInt(markup.find('input.away').val()) } ]
+            var update = { a: { name: match.a.name, score: parseInt(markup.find('input.home').val()) },
+                           b: { name: match.b.name, score: parseInt(markup.find('input.away').val()) } }
             resultStream.push(update)
           })
 
@@ -141,8 +140,8 @@ $(function() {
   var matchProp = matchStream.toProperty({ participants: _([]), matches: _([]) })
   var participantAdds = matchProp.sampledBy(participantStream, function(propertyValue, streamValue) {
     if (propertyValue.participants.size() > 0) {
-      var newMatches = propertyValue.participants.map(function(it) {
-        return [ { name: it, score: null }, { name: streamValue, score: null } ]
+      var newMatches = propertyValue.participants.map(function(it, i) {
+        return { id: (propertyValue.matches.size() + i), a: { name: it, score: null }, b: { name: streamValue, score: null } }
       })
       propertyValue.matches = propertyValue.matches.union(newMatches.value())
     }
@@ -151,12 +150,12 @@ $(function() {
   })
   var resultUpdates = matchProp.sampledBy(resultStream, function(propertyValue, streamValue) {
     propertyValue.matches = propertyValue.matches.map(function(it) {
-      if (it[0].name === streamValue[0].name && it[1].name === streamValue[1].name) {
-        it[0].score = streamValue[0].score
-        it[1].score = streamValue[1].score
-      } else if (it[0].name === streamValue[1].name && it[1].name === streamValue[0].name) {
-        it[0].score = streamValue[1].score
-        it[1].score = streamValue[0].score
+      if (it.a.name === streamValue.a.name && it.b.name === streamValue.b.name) {
+        it.a.score = streamValue.a.score
+        it.b.score = streamValue.b.score
+      } else if (it.a.name === streamValue.b.name && it.b.name === streamValue.a.name) {
+        it.a.score = streamValue.b.score
+        it.b.score = streamValue.a.score
       }
       return it
     })
@@ -170,10 +169,10 @@ $(function() {
         return it
     })
     propertyValue.matches = propertyValue.matches.map(function(it) {
-      if (it[0].name === streamValue.from) {
-        it[0].name = streamValue.to
-      } else if (it[1].name === streamValue.from) {
-        it[1].name = streamValue.to
+      if (it.a.name === streamValue.from) {
+        it.a.name = streamValue.to
+      } else if (it.b.name === streamValue.from) {
+        it.b.name = streamValue.to
       }
       return it
     })
@@ -194,13 +193,17 @@ $(function() {
   })
 
   var unassigned = templates.unassigned.appendTo($container)
-  participantRenames.merge(participantAdds).merge(resultUpdates).onValue(function(state) {
-    $('.match').remove()
+  participantRenames.merge(participantAdds).merge(resultUpdates).throttle(10).onValue(function(state) {
+    var $matches = $('.match')
     state.matches.each(function(it) {
-      unassigned.append(Match.create(resultStream, it).markup)
+      var $match = $matches.filter('[data-id="'+it.id+'"]')
+      if ($match.length)
+        $match.replaceWith(Match.create(resultStream, it).markup)
+      else
+        unassigned.append(Match.create(resultStream, it).markup)
     })
   })
 
   participants.each(function(it) { participantStream.push(it) })
-  pairs.each(function(it) { resultStream.push([ { name: it.home, score: it.homeScore }, { name: it.away, score: it.awayScore } ]) })
+  pairs.each(function(it) { resultStream.push({ a: { name: it.home, score: it.homeScore }, b: { name: it.away, score: it.awayScore } }) })
 })
