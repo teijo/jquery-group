@@ -49,8 +49,8 @@
         +'{{#each this}}'
         +'<tr><td><input class="name" type="text" data-prev="{{name}}" value="{{name}}" /></td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>'
         +'{{/each}}'
+        +'<tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="4"><input type="submit" value="Add" /></td></tr>'
         +'</table>'
-        +'<input class="add" type="text" value="{{name}}" /><input type="submit" value="Add" />'
         +'</div>')
       var roundsMarkup = Handlebars.compile(
         '<div class="rounds"></div>')

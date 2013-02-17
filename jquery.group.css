@@ -21,6 +21,9 @@
   position: absolute;
   left: -1em;
 }
+.jqgroup .standings input[type=submit] {
+  width: 100%;
+}
 .jqgroup .standings input[type=text] {
   border: none;
   width: 100%;
@@ -36,7 +39,6 @@
   background: #666666;
 }
 .jqgroup .standings input[type=text].add {
-  width: 50%;
   background-color: #999999;
 }
 .jqgroup .standings input[type=text].conflict {
