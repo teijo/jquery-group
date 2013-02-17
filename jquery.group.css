@@ -11,10 +11,22 @@
 .jqgroup .standings table {
   width: 100%;
 }
+.jqgroup .standings table td:first-child {
+  position: relative;
+}
+.jqgroup .standings table td:first-child:hover:before {
+  color: #333333;
+  font-size: 1em;
+  content: "\0270E";
+  position: absolute;
+  left: -1em;
+}
 .jqgroup .standings table input {
   border: none;
   width: 100%;
   background: transparent;
+  height: 20px;
+  border-radius: 3px;
 }
 .jqgroup .standings table input:hover {
   background: #999999;
