@@ -98,17 +98,17 @@ $(function() {
     var id = 0
     var template = Handlebars.compile(
       '<div data-id="{{id}}" class="match" draggable="true">'
-      +'<span class="home">{{home}}</span>'
-      +'<input class="home" value="{{homeScore}}" />'
-      +'<input class="away" value="{{awayScore}}" />'
-      +'<span class="away">{{away}}</span>'
+      +'<span class="home">{{a.name}}</span>'
+      +'<input class="home" value="{{a.score}}" />'
+      +'<input class="away" value="{{b.score}}" />'
+      +'<span class="away">{{b.name}}</span>'
       +'</div>')
 
     return {
       create: function(resultStream, match) {
         return new function() {
           var that = this
-          var markup = $(template({ id: match.id, home: match.a.name, homeScore: match.a.score, away: match.b.name, awayScore: match.b.score }))
+          var markup = $(template(match))
           this.markup = markup
 
           markup.find('input').asEventStream('change').onValue(function() {
