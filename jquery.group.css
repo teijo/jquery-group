@@ -1,11 +1,10 @@
 .jqgroup {
   width: 100%;
-  background-color: red;
+  background-color: #cccccc;
   display: inline-block;
 }
 .jqgroup .standings {
   float: left;
-  background-color: #cccccc;
   width: 20%;
 }
 .jqgroup .standings table {
