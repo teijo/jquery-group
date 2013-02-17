@@ -21,19 +21,26 @@
   position: absolute;
   left: -1em;
 }
-.jqgroup .standings table input {
+.jqgroup .standings input[type=text] {
   border: none;
   width: 100%;
   background: transparent;
   height: 20px;
   border-radius: 3px;
 }
-.jqgroup .standings table input:hover {
+.jqgroup .standings input[type=text]:hover {
   background: #999999;
 }
-.jqgroup .standings table input:focus {
+.jqgroup .standings input[type=text]:focus {
   color: white;
   background: #666666;
+}
+.jqgroup .standings input[type=text].add {
+  width: 50%;
+  background-color: #999999;
+}
+.jqgroup .standings input[type=text].conflict {
+  background-color: #990000;
 }
 .jqgroup .standings td:not(:first-child) {
   text-align: center;

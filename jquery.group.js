@@ -46,10 +46,10 @@ $(function() {
       +'</colgroup>'
       +'<tr><th>Name</th><th>W</th><th>L</th><th>T</th><th>P</tr>'
       +'{{#each this}}'
-      +'<tr><td><input class="name" data-prev="{{name}}" value="{{name}}" /></td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>'
+      +'<tr><td><input class="name" type="text" data-prev="{{name}}" value="{{name}}" /></td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>'
       +'{{/each}}'
       +'</table>'
-      +'<input class="add" value="{{name}}" /><input type="submit" value="Add" />'
+      +'<input class="add" type="text" value="{{name}}" /><input type="submit" value="Add" />'
       +'</div>')
     var roundsMarkup = Handlebars.compile(
       '<div class="rounds"></div>')
@@ -64,6 +64,11 @@ $(function() {
           .onValue(function(el) {
             renameStream.push({ from: el.attr('data-prev'), to: el.val() })
             el.attr('data-prev', el.val())
+          })
+        markup.find('input').asEventStream('keyup')
+          .onValue(function(ev) {
+            var name = $(ev.target).val()
+            $(ev.target).toggleClass('conflict', (participants.pluck('name').contains(name)))
           })
         markup.find('input.add').asEventStream('change')
           .map('.target')

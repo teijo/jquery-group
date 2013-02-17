@@ -16,17 +16,22 @@
           content: '\0270E'
           position: absolute
           left: -1em
-      input
-        border: none
-        width: 100%
-        background: transparent
-        height: 20px
-        border-radius: 3px
-        &:hover
-          background: #999
-        &:focus
-          color: #FFF
-          background: #666
+    input[type=text]
+      border: none
+      width: 100%
+      background: transparent
+      height: 20px
+      border-radius: 3px
+      &:hover
+        background: #999
+      &:focus
+        color: #FFF
+        background: #666
+      &.add
+        width: 50%
+        background-color: #999
+      &.conflict
+        background-color: #900
     td:not(:first-child)
       text-align: center
     th:first-child
