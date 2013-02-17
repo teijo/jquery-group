@@ -1,6 +1,7 @@
 function makeStandings(participants, pairs) {
   return participants.map(function(it) {
     var matches = pairs
+      .filter(function(match) { return match.a.score !== null && match.b.score !== null })
       .filter(function(match) { return match.a.name === it || match.b.name === it })
       .map(function(match) {
         if (match.a.name === it)
