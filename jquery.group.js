@@ -99,7 +99,7 @@
             r.asEventStream('dragleave').doAction('.preventDefault').onValue(function(ev) { $(ev.target).removeClass('over') })
             r.asEventStream('drop').doAction('.preventDefault').onValue(function(ev) {
               var id = ev.originalEvent.dataTransfer.getData('Text')
-              var obj = $container.find('[data-id="'+id+'"]')
+              var obj = $container.find('[data-matchId="'+id+'"]')
               $(ev.target).append(obj)
               $(ev.target).removeClass('over')
             })
@@ -111,7 +111,7 @@
     var Match = (function() {
       var id = 0
       var template = Handlebars.compile(
-        '<div data-id="{{id}}" class="match" draggable="true">'
+        '<div data-matchId="{{id}}" class="match" draggable="true">'
         +'<span class="home">{{a.name}}</span>'
         +'<input class="home" value="{{a.score}}" />'
         +'<input class="away" value="{{b.score}}" />'
@@ -212,7 +212,7 @@
     participantRenames.merge(participantAdds).merge(resultUpdates).throttle(10).onValue(function(state) {
       var $matches = $container.find('.match')
       state.matches.each(function(it) {
-        var $match = $matches.filter('[data-id="'+it.id+'"]')
+        var $match = $matches.filter('[data-matchId="'+it.id+'"]')
         if ($match.length)
           $match.replaceWith(Match.create(resultStream, it).markup)
         else if (it.round)
