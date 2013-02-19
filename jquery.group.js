@@ -32,7 +32,9 @@
     var participants = _(["a", "b", "c", "d", "e"])
     var pairs = participants.map(function(it, i) {
       return participants.filter(function(_, j) { return j < i }).map(function(it2) {
-        return { a: { name: it, score: ~~(Math.random()*10)%10 }, b: { name: it2, score: ~~(Math.random()*10)%10 } }
+        return { round: ~~(Math.random()*10)%5,
+                 a: { name: it,  score: ~~(Math.random()*10)%10 },
+                 b: { name: it2, score: ~~(Math.random()*10)%10 } }
       }).value()
     }).flatten(true)
     var $container = $('<div class="jqgroup"></div>').appendTo(opts.el)
@@ -85,7 +87,7 @@
 
     var Round = (function() {
       var template = Handlebars.compile(
-        '<div class="round"><header>Round {{this}}</header></div>')
+        '<div data-roundId="{{this}}" class="round"><header>Round {{this}}</header></div>')
 
       return {
         create: function(round) {
@@ -163,9 +165,11 @@
     var resultUpdates = matchProp.sampledBy(resultStream, function(propertyValue, streamValue) {
       propertyValue.matches = propertyValue.matches.map(function(it) {
         if (it.a.name === streamValue.a.name && it.b.name === streamValue.b.name) {
+          it.round = streamValue.round
           it.a.score = streamValue.a.score
           it.b.score = streamValue.b.score
         } else if (it.a.name === streamValue.b.name && it.b.name === streamValue.a.name) {
+          it.round = streamValue.round
           it.a.score = streamValue.b.score
           it.b.score = streamValue.a.score
         }
@@ -211,6 +215,8 @@
         var $match = $matches.filter('[data-id="'+it.id+'"]')
         if ($match.length)
           $match.replaceWith(Match.create(resultStream, it).markup)
+        else if (it.round)
+          $('div.round').filter('[data-roundId="'+it.round+'"]').append(Match.create(resultStream, it).markup)
         else
           unassigned.append(Match.create(resultStream, it).markup)
       })
