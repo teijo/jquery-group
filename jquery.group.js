@@ -57,7 +57,7 @@
       var roundsMarkup = Handlebars.compile(
         '<div class="rounds"></div>')
       var unassignedMarkup = Handlebars.compile(
-        '<div class="unassigned"></div>')
+        '<div class="unassigned"><header>Unassigned</header></div>')
       return {
         standings: function(participantStream, renameStream, participants) {
           var markup = $(standingsMarkup(participants.value()))
