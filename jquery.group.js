@@ -32,7 +32,7 @@
     var participants = _(["a", "b", "c", "d", "e"])
     var pairs = participants.map(function(it, i) {
       return participants.filter(function(_, j) { return j < i }).map(function(it2) {
-        return { home: it, homeScore: ~~(Math.random()*10)%10, away: it2, awayScore: ~~(Math.random()*10)%10 }
+        return { a: { name: it, score: ~~(Math.random()*10)%10 }, b: { name: it2, score: ~~(Math.random()*10)%10 } }
       }).value()
     }).flatten(true)
     var $container = $('<div class="jqgroup"></div>').appendTo(opts.el)
@@ -217,7 +217,7 @@
     })
 
     participants.each(function(it) { participantStream.push(it) })
-    pairs.each(function(it) { resultStream.push({ a: { name: it.home, score: it.homeScore }, b: { name: it.away, score: it.awayScore } }) })
+    pairs.each(function(it) { resultStream.push(it) })
   }
 
   var methods = {
