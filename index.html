@@ -13,8 +13,19 @@
 <style>
 body { padding: 3em; }
 </style>
-<script>
-$(function() { $('#container').group() })
+<script type='text/javascript'>
+$(function() {
+  var participants = _(["a", "b", "c", "d", "e"])
+  var pairs = participants.map(function(it, i) {
+    return participants.filter(function(_, j) { return j < i }).map(function(it2) {
+      return { round: ~~(Math.random()*10)%5,
+              a: { name: it,  score: ~~(Math.random()*10)%10 },
+              b: { name: it2, score: ~~(Math.random()*10)%10 } }
+    }).value()
+  }).flatten(true)
+
+  $('#container').group({ participants: participants.value(), pairs: pairs.value() })
+})
 </script>
 <title>jQuery group</title>
 <script type='text/javascript'>

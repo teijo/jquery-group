@@ -29,14 +29,6 @@
   }
 
   var group = function(opts) {
-    var participants = _(["a", "b", "c", "d", "e"])
-    var pairs = participants.map(function(it, i) {
-      return participants.filter(function(_, j) { return j < i }).map(function(it2) {
-        return { round: ~~(Math.random()*10)%5,
-                 a: { name: it,  score: ~~(Math.random()*10)%10 },
-                 b: { name: it2, score: ~~(Math.random()*10)%10 } }
-      }).value()
-    }).flatten(true)
     var $container = $('<div class="jqgroup"></div>').appendTo(opts.el)
     var templates = (function() {
       var standingsMarkup = Handlebars.compile(
@@ -222,8 +214,8 @@
       })
     })
 
-    participants.each(function(it) { participantStream.push(it) })
-    pairs.each(function(it) { resultStream.push(it) })
+    _(opts.participants).each(function(it) { participantStream.push(it) })
+    _(opts.pairs).each(function(it) { resultStream.push(it) })
   }
 
   var methods = {
