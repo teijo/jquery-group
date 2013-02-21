@@ -45,6 +45,8 @@
     position: relative
     background-color: #AAA
     width: 80%
+    .match
+      max-width: 100px
   .participant
     background-color: #EEE
   .match
@@ -56,12 +58,27 @@
     margin: 2px
     text-align: center
     input
-      width: 2em
+      font-size: 16px
+      font-weight: bold
+      width: 15%
+      margin: 0 2.5%
       border: none
       border-radius: 2px
-      margin: 2px
-    span.name
-      margin: 2px
+      text-align: center
+      background-color: #BBB
+      &:hover
+        background-color: #EEE
+      &:focus
+        background-color: #333
+        color: #FFF
+    span
+      display: inline-block
+    span.home
+      width: 30%
+      text-align: left
+    span.away
+      width: 30%
+      text-align: right
   .round
     width: 25%
     background-color: #888

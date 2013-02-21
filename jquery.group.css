@@ -60,6 +60,9 @@
   background-color: #aaaaaa;
   width: 80%;
 }
+.jqgroup .unassigned .match {
+  max-width: 100px;
+}
 .jqgroup .participant {
   background-color: #eeeeee;
 }
@@ -73,13 +76,32 @@
   text-align: center;
 }
 .jqgroup .match input {
-  width: 2em;
+  font-size: 16px;
+  font-weight: bold;
+  width: 15%;
+  margin: 0 2.5%;
   border: none;
   border-radius: 2px;
-  margin: 2px;
+  text-align: center;
+  background-color: #bbbbbb;
 }
-.jqgroup .match span.name {
-  margin: 2px;
+.jqgroup .match input:hover {
+  background-color: #eeeeee;
+}
+.jqgroup .match input:focus {
+  background-color: #333333;
+  color: white;
+}
+.jqgroup .match span {
+  display: inline-block;
+}
+.jqgroup .match span.home {
+  width: 30%;
+  text-align: left;
+}
+.jqgroup .match span.away {
+  width: 30%;
+  text-align: right;
 }
 .jqgroup .round {
   width: 25%;
