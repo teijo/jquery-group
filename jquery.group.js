@@ -79,12 +79,12 @@
 
     var Round = (function() {
       var template = Handlebars.compile(
-        '<div data-roundId="{{this}}" class="round"><header>Round {{this}}</header></div>')
+        '<div data-roundId="{{round}}" class="round" style="width: {{width}}%"><header>Round {{round}}</header></div>')
 
       return {
-        create: function(round) {
+        create: function(round, roundCount) {
           return new function() {
-            var r = $(template(round))
+            var r = $(template({ round: round, width: (100 / roundCount) }))
             this.markup = r
             r.asEventStream('dragover').doAction('.preventDefault').onValue(function(ev) { })
             r.asEventStream('dragenter').doAction('.preventDefault').onValue(function(ev) { $(ev.target).addClass('over') })
@@ -196,8 +196,10 @@
 
     $('<div class="standings"></div>').appendTo($container)
     var rounds = templates.rounds.appendTo($container)
-    _([1, 2, 3, 4]).each(function(it) {
-      rounds.append(Round.create(it).markup)
+    // 2n teams -> n-1 rounds, 2n+1 teams -> n rounds
+    var roundCount = opts.participants.length - 1 + (opts.participants.length % 2)
+    _(_.range(roundCount)).each(function(it) {
+      rounds.append(Round.create(it+1, roundCount).markup)
     })
 
     var unassigned = templates.unassigned.appendTo($container)
