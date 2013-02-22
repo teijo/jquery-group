@@ -23,11 +23,6 @@
       background: transparent
       height: 20px
       border-radius: 3px
-      &:hover
-        background: #999
-      &:focus
-        color: #FFF
-        background: #666
       &.add
         background-color: #999
       &.conflict
@@ -57,7 +52,7 @@
     padding: 3px 10px
     margin: 2px
     text-align: center
-    input
+    input[type=text]
       font-size: 16px
       font-weight: bold
       width: 15%
@@ -66,11 +61,6 @@
       border-radius: 2px
       text-align: center
       background-color: #BBB
-      &:hover
-        background-color: #EEE
-      &:focus
-        background-color: #333
-        color: #FFF
     span
       display: inline-block
     span.home
@@ -93,3 +83,13 @@
       float: none
     header
       display: block
+  &:hover
+    input[type=text]
+      background-color: #DDD
+  input[type=text]
+    &:hover
+      background-color: #999
+      color: #EEE
+    &:focus
+      background-color: #333
+      color: #FFF

@@ -105,8 +105,8 @@
       var template = Handlebars.compile(
         '<div data-matchId="{{id}}" class="match" draggable="true">'
         +'<span class="home">{{a.name}}</span>'
-        +'<input class="home" value="{{a.score}}" />'
-        +'<input class="away" value="{{b.score}}" />'
+        +'<input type="text" class="home" value="{{a.score}}" />'
+        +'<input type="text" class="away" value="{{b.score}}" />'
         +'<span class="away">{{b.name}}</span>'
         +'</div>')
 
