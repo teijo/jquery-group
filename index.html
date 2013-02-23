@@ -11,7 +11,7 @@
 <script type="text/javascript" src="jquery.group.js"></script>
 <link type="text/css" rel="stylesheet" href="jquery.group.css" />
 <style>
-body { padding: 3em; }
+body { padding: 1em 3em; }
 pre { background-color: #EEE; }
 </style>
 <script type='text/javascript'>
@@ -29,7 +29,7 @@ $(function() {
     }).value()
   }).flatten(true)
 
-  $('#container').group({ participants: participants.value(), pairs: pairs.value(), onchange: printState })
+  $('#container').group({ pairs: pairs.value(), onchange: printState })
 })
 </script>
 <title>jQuery group</title>
@@ -49,7 +49,9 @@ $(function() {
 </script>
 </head>
 <body>
+<h1>Tournament group</h1>
 <div id="container"></div>
+<h2>onchange() -> JSON</h2>
 <pre id="state"></pre>
 </body>
 </html>

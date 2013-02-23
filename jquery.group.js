@@ -28,8 +28,7 @@
     }).sortBy(function(it) { return -it.points })
   }
 
-  var group = function(opts) {
-    var $container = $('<div class="jqgroup"></div>').appendTo(opts.el)
+  var group = function($container, participants, pairs, onchange) {
     var templates = (function() {
       var standingsMarkup = Handlebars.compile(
         '<div class="standings">'
@@ -191,7 +190,7 @@
     result.throttle(10).onValue(function(state) {
       console.log('New state created');
       console.log(state);
-      opts.onchange(state.matches.value())
+      onchange(state.matches.value())
     })
 
     participantAdds.merge(resultUpdates).throttle(10).onValue(function(state) {
@@ -201,7 +200,7 @@
     $('<div class="standings"></div>').appendTo($container)
     var rounds = templates.rounds.appendTo($container)
     // 2n teams -> n-1 rounds, 2n+1 teams -> n rounds
-    var roundCount = opts.participants.length - 1 + (opts.participants.length % 2)
+    var roundCount = participants.size() - 1 + (participants.size() % 2)
     _(_.range(roundCount)).each(function(it) {
       rounds.append(Round.create(it+1, roundCount).markup)
     })
@@ -220,17 +219,20 @@
       })
     })
 
-    _(opts.participants).each(function(it) { participantStream.push(it) })
-    _(opts.pairs).each(function(it) { resultStream.push(it) })
+    participants.each(function(it) { participantStream.push(it) })
+    pairs.each(function(it) { resultStream.push(it) })
   }
 
   var methods = {
     init: function(opts) {
       opts = opts || {}
-      opts.onchange = opts.onchange || function() {}
-      var that = this
-      opts.el = this
-      return new group(opts)
+      var container = this
+      var pairs = _(opts.pairs)
+      var participants = pairs.pluck('a').union(pairs.pluck('b').value()).pluck('name').unique()
+      return new group($('<div class="jqgroup"></div>').appendTo(container),
+                       participants,
+                       pairs,
+                       opts.onchange || function() {})
     }
   }
 
