@@ -12,8 +12,13 @@
 <link type="text/css" rel="stylesheet" href="jquery.group.css" />
 <style>
 body { padding: 3em; }
+pre { background-color: #EEE; }
 </style>
 <script type='text/javascript'>
+function printState(state) {
+  $('pre').text(JSON.stringify(state, undefined, 2))
+}
+
 $(function() {
   var participants = _(["a", "b", "c", "d", "e"])
   var pairs = participants.map(function(it, i) {
@@ -24,7 +29,7 @@ $(function() {
     }).value()
   }).flatten(true)
 
-  $('#container').group({ participants: participants.value(), pairs: pairs.value() })
+  $('#container').group({ participants: participants.value(), pairs: pairs.value(), onchange: printState })
 })
 </script>
 <title>jQuery group</title>
@@ -45,6 +50,6 @@ $(function() {
 </head>
 <body>
 <div id="container"></div>
-<div id="container2"></div>
+<pre id="state"></pre>
 </body>
 </html>

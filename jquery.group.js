@@ -188,7 +188,11 @@
     })
 
     var result = Bacon.mergeAll([participantAdds, resultUpdates, participantRenames])
-    result.throttle(10).onValue(function() { console.log('New state created'); console.log(arguments) })
+    result.throttle(10).onValue(function(state) {
+      console.log('New state created');
+      console.log(state);
+      opts.onchange(state.matches.value())
+    })
 
     participantAdds.merge(resultUpdates).throttle(10).onValue(function(state) {
       $container.find('.standings').replaceWith(templates.standings(participantStream, renameStream, makeStandings(state.participants, state.matches)))
@@ -223,6 +227,7 @@
   var methods = {
     init: function(opts) {
       opts = opts || {}
+      opts.onchange = opts.onchange || function() {}
       var that = this
       opts.el = this
       return new group(opts)
