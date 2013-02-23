@@ -116,6 +116,11 @@
             var markup = $(template(match))
             this.markup = markup
 
+            markup.find('input').asEventStream('keyup')
+              .onValue(function(ev) {
+                $(ev.target).toggleClass('conflict', toIntOrNull($(ev.target).val()) === null)
+              })
+
             markup.find('input').asEventStream('change').onValue(function() {
               var update = { a: { name: match.a.name, score: toIntOrNull(markup.find('input.home').val()) },
                             b: { name: match.b.name, score: toIntOrNull(markup.find('input.away').val()) } }

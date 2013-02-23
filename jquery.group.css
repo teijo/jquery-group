@@ -33,9 +33,6 @@
 .jqgroup .standings input[type=text].add {
   background-color: #999999;
 }
-.jqgroup .standings input[type=text].conflict {
-  background-color: #990000;
-}
 .jqgroup .standings td:not(:first-child) {
   text-align: center;
 }
@@ -118,4 +115,8 @@
 .jqgroup input[type=text]:focus {
   background-color: #333333;
   color: white;
+}
+.jqgroup input[type=text].conflict {
+  background-color: #990000;
+  color: #ffeeee;
 }
