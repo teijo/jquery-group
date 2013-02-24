@@ -8,6 +8,10 @@
     return isNaN(value) ? null : value
   }
 
+  function evTarget(ev) {
+    return $(ev.target)
+  }
+
   function makeStandings(participants, pairs) {
     return participants.map(function(it) {
       var matches = pairs
@@ -120,14 +124,19 @@
             var markup = $(template(match))
             this.markup = markup
 
-            markup.find('input').asEventStream('keyup')
-              .onValue(function(ev) {
-                $(ev.target).toggleClass('conflict', toIntOrNull($(ev.target).val()) === null)
+            var keyUps = markup.find('input').asEventStream('keyup')
+              .map(evTarget)
+              .onValue(function($el) {
+                $el.toggleClass('conflict', toIntOrNull($el.val()) === null)
               })
 
             markup.find('input').asEventStream('change').onValue(function() {
-              var update = { a: { name: match.a.name, score: toIntOrNull(markup.find('input.home').val()) },
-                            b: { name: match.b.name, score: toIntOrNull(markup.find('input.away').val()) } }
+              var scoreA = toIntOrNull(markup.find('input.home').val())
+              var scoreB = toIntOrNull(markup.find('input.away').val())
+              if (scoreA === null || scoreB === null)
+                return
+              var update = { a: { name: match.a.name, score: scoreA },
+                             b: { name: match.b.name, score: scoreB } }
               resultStream.push(update)
             })
 
