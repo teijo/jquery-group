@@ -50,7 +50,7 @@
         +'{{#each this}}'
         +'<tr><td><input class="name" type="text" data-prev="{{name}}" value="{{name}}" /></td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>'
         +'{{/each}}'
-        +'<tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="4"><input type="submit" value="Add" /></td></tr>'
+        +'<tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="4"><input type="submit" value="Add" disabled="disabled" /></td></tr>'
         +'</table>'
         +'</div>')
       var roundsMarkup = Handlebars.compile(
@@ -60,19 +60,41 @@
       return {
         standings: function(participantStream, renameStream, participants) {
           var markup = $(standingsMarkup(participants.value()))
+          var $submit = markup.find('input[type=submit]')
+
+          var keyUps = markup.find('input').asEventStream('keyup')
+            .map(evTarget)
+            .map(function($el) {
+              var value = $el.val()
+              var previous = $el.attr('data-prev')
+              var valid = value.length > 0 && (!participants.pluck('name').contains(value) || previous === value)
+              console.log(valid)
+              return { el: $el, value: value, valid: valid }
+            }).toProperty()
+
+          keyUps.onValue(function(state) {
+            state.el.toggleClass('conflict', !state.valid)
+            if (state.el.hasClass('add')) {
+              if (state.valid)
+                $submit.removeAttr('disabled')
+              else
+                $submit.attr('disabled', 'disabled')
+            }
+          })
+
+          var isValid = keyUps.map(function(state) { return state.valid }).toProperty()
+
           markup.find('input.name').asEventStream('change')
+            .filter(isValid)
             .map('.target')
             .map($)
             .onValue(function(el) {
               renameStream.push({ from: el.attr('data-prev'), to: el.val() })
               el.attr('data-prev', el.val())
             })
-          markup.find('input').asEventStream('keyup')
-            .onValue(function(ev) {
-              var name = $(ev.target).val()
-              $(ev.target).toggleClass('conflict', (participants.pluck('name').contains(name)))
-            })
+
           markup.find('input.add').asEventStream('change')
+            .filter(isValid)
             .map('.target')
             .map($)
             .map(function(el) { return el.val() })
