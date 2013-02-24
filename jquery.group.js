@@ -1,5 +1,9 @@
 (function($) {
+  var numberRe = new RegExp(/^[0-9]+$/)
+
   function toIntOrNull(string) {
+    if (!numberRe.test(string))
+      return null
     var value = parseInt(string)
     return isNaN(value) ? null : value
   }
