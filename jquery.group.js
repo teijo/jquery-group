@@ -111,7 +111,7 @@
         '<div data-roundId="{{round}}" class="round" style="width: {{width}}%"><header>Round {{round}}</header></div>')
 
       return {
-        create: function(round, roundCount) {
+        create: function(moveStream, round, roundCount) {
           return new function() {
             var r = $(template({ round: round, width: (100 / roundCount) }))
             this.markup = r
@@ -123,6 +123,7 @@
               var obj = $container.find('[data-matchId="'+id+'"]')
               $(ev.target).append(obj)
               $(ev.target).removeClass('over')
+              moveStream.push({ match: parseInt(id), round: parseInt($(ev.target).attr('data-roundId')) })
             })
           }
         }
@@ -181,6 +182,7 @@
     var participantStream = new Bacon.Bus()
     var renameStream = new Bacon.Bus()
     var resultStream = new Bacon.Bus()
+    var moveStream = new Bacon.Bus()
 
     var matchProp = matchStream.toProperty({ participants: _([]), matches: _([]) })
     var participantAdds = matchProp.sampledBy(participantStream, function(propertyValue, streamValue) {
@@ -225,8 +227,16 @@
       })
       return propertyValue
     })
+    var participantMoves = matchProp.sampledBy(moveStream, function(propertyValue, streamValue) {
+      propertyValue.matches = propertyValue.matches.map(function(it) {
+        if (it.id === streamValue.match)
+          it.round = streamValue.round
+        return it
+      })
+      return propertyValue
+    })
 
-    var result = Bacon.mergeAll([participantAdds, resultUpdates, participantRenames])
+    var result = Bacon.mergeAll([participantAdds, resultUpdates, participantRenames, participantMoves])
     result.throttle(10).onValue(function(state) {
       console.log('New state created');
       console.log(state);
@@ -242,7 +252,7 @@
     // 2n teams -> n-1 rounds, 2n+1 teams -> n rounds
     var roundCount = participants.size() - 1 + (participants.size() % 2)
     _(_.range(roundCount)).each(function(it) {
-      rounds.append(Round.create(it+1, roundCount).markup)
+      rounds.append(Round.create(moveStream, it+1, roundCount).markup)
     })
 
     var unassigned = templates.unassigned.appendTo($container)
