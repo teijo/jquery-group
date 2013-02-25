@@ -12,6 +12,10 @@
     return $(ev.target)
   }
 
+  function evElTarget(ev) {
+    return [ev, evTarget(ev)]
+  }
+
   function makeStandings(participants, pairs) {
     return participants.map(function(it) {
       var matches = pairs
@@ -116,15 +120,17 @@
             var r = $(template({ round: round, width: (100 / roundCount) }))
             this.markup = r
             r.asEventStream('dragover').doAction('.preventDefault').onValue(function(ev) { })
-            r.asEventStream('dragenter').doAction('.preventDefault').onValue(function(ev) { $(ev.target).addClass('over') })
-            r.asEventStream('dragleave').doAction('.preventDefault').onValue(function(ev) { $(ev.target).removeClass('over') })
-            r.asEventStream('drop').doAction('.preventDefault').onValue(function(ev) {
-              var id = ev.originalEvent.dataTransfer.getData('Text')
-              var obj = $container.find('[data-matchId="'+id+'"]')
-              $(ev.target).append(obj)
-              $(ev.target).removeClass('over')
-              moveStream.push({ match: parseInt(id), round: parseInt($(ev.target).attr('data-roundId')) })
-            })
+            r.asEventStream('dragenter').doAction('.preventDefault').map(evTarget).onValue(function($el) { $el.addClass('over') })
+            r.asEventStream('dragleave').doAction('.preventDefault').map(evTarget).onValue(function($el) { $el.removeClass('over') })
+            r.asEventStream('drop').doAction('.preventDefault')
+              .map(evElTarget)
+              .onValues(function(ev, $el) {
+                var id = ev.originalEvent.dataTransfer.getData('Text')
+                var obj = $container.find('[data-matchId="'+id+'"]')
+                $el.append(obj)
+                $el.removeClass('over')
+                moveStream.push({ match: parseInt(id), round: parseInt($el.attr('data-roundId')) })
+              })
           }
         }
       }
@@ -163,14 +169,14 @@
               resultStream.push(update)
             })
 
-            markup.asEventStream('dragstart').map(".originalEvent").onValue(function(ev) {
+            markup.asEventStream('dragstart').map(".originalEvent").map(evElTarget).onValues(function(ev, $el) {
               ev.dataTransfer.setData('Text', match.id)
-              $(ev.target).css('opacity', 0.5)
+              $el.css('opacity', 0.5)
               $container.find('.round').addClass('droppable')
             })
 
-            markup.asEventStream('dragend').map(".originalEvent").onValue(function(ev) {
-              $(ev.target).css('opacity', 1.0)
+            markup.asEventStream('dragend').map(".originalEvent").map(evElTarget).onValues(function(ev, $el) {
+              $el.css('opacity', 1.0)
               $container.find('.round').removeClass('droppable')
             })
           }
