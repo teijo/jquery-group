@@ -11,15 +11,20 @@
 <script type="text/javascript" src="jquery.group.js"></script>
 <link type="text/css" rel="stylesheet" href="jquery.group.css" />
 <style>
-body { padding: 1em 3em; }
+body { padding: 1%; }
 pre { background-color: #EEE; max-height: 500px; overflow-y: scroll; }
+#data { float: right; width: 28%; margin-left: 2%; }
+#components { float: left; width: 68%; margin-right: 2%; }
 </style>
 <script type='text/javascript'>
-function printState(state) {
-  $('pre').text(JSON.stringify(state, undefined, 2))
-}
-
 $(function() {
+  function changeCallback(state) {
+    $('pre').text(JSON.stringify(state, undefined, 2))
+
+    // Update read-only version of the component
+    //$('#view').group({ pairs: pairs.value(), init: state })
+  }
+
   var participants = _(["a", "b", "c", "d", "e"])
   var pairs = participants.map(function(it, i) {
     return participants.filter(function(_, j) { return j < i }).map(function(it2) {
@@ -29,7 +34,7 @@ $(function() {
     }).value()
   }).flatten(true)
 
-  $('#container').group({ pairs: pairs.value(), onchange: printState })
+  $('#editor').group({ pairs: pairs.value(), onchange: changeCallback })
 })
 </script>
 <title>jQuery group</title>
@@ -49,9 +54,16 @@ $(function() {
 </script>
 </head>
 <body>
-<h1>Tournament group</h1>
-<div id="container"></div>
-<h2>onchange() -> JSON</h2>
-<pre id="state"></pre>
+<h1>Round-robin tournament group editor</h1>
+<div id="data">
+  <h2>State</h2>
+  <pre id="state"></pre>
+</div>
+<div id="components">
+  <h2>Editor</h2>
+  <div id="editor"></div>
+  <h2>View</h2>
+  <div id="view"></div>
+</div>
 </body>
 </html>
