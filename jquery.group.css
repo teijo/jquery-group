@@ -1,3 +1,29 @@
+.jqgroup.read-write .match {
+  cursor: move;
+}
+.jqgroup.read-write:hover input[type=text] {
+  background-color: #dddddd;
+}
+.jqgroup.read-write .standings table td:first-child:hover:before {
+  color: #333333;
+  font-size: 1em;
+  content: "\0270E";
+  position: absolute;
+  left: -1em;
+}
+.jqgroup.read-write input[type=text]:hover {
+  background-color: #999999;
+  color: #eeeeee;
+}
+.jqgroup.read-write input[type=text]:focus {
+  background-color: #333333;
+  color: white;
+}
+.jqgroup.read-write input[type=text].conflict, .jqgroup.read-write input[type=text].add.conflict {
+  background-color: #990000;
+  color: #ffeeee;
+}
+
 .jqgroup {
   width: 100%;
   background-color: #cccccc;
@@ -12,13 +38,6 @@
 }
 .jqgroup .standings table td:first-child {
   position: relative;
-}
-.jqgroup .standings table td:first-child:hover:before {
-  color: #333333;
-  font-size: 1em;
-  content: "\0270E";
-  position: absolute;
-  left: -1em;
 }
 .jqgroup .standings input[type=submit] {
   width: 100%;
@@ -57,7 +76,6 @@
   background-color: #eeeeee;
 }
 .jqgroup .match {
-  cursor: move;
   float: left;
   background-color: #bbbbbb;
   border: 1px outset #666666;
@@ -104,19 +122,4 @@
 }
 .jqgroup .round header {
   display: block;
-}
-.jqgroup:hover input[type=text] {
-  background-color: #dddddd;
-}
-.jqgroup input[type=text]:hover {
-  background-color: #999999;
-  color: #eeeeee;
-}
-.jqgroup input[type=text]:focus {
-  background-color: #333333;
-  color: white;
-}
-.jqgroup input[type=text].conflict, .jqgroup input[type=text].add.conflict {
-  background-color: #990000;
-  color: #ffeeee;
 }

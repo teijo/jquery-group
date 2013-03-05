@@ -1,3 +1,29 @@
+.jqgroup.read-write
+  .match
+    cursor: move
+  &:hover
+    input[type=text]
+      background-color: #DDD
+  .standings
+    table
+      td:first-child
+        &:hover:before
+          color: #333
+          font-size: 1em
+          content: '\0270E'
+          position: absolute
+          left: -1em
+  input[type=text]
+    &:hover
+      background-color: #999
+      color: #EEE
+    &:focus
+      background-color: #333
+      color: #FFF
+    &.conflict, &.add.conflict
+      background-color: #900
+      color: #FEE
+
 .jqgroup
   width: 100%
   background-color: #CCC
@@ -9,12 +35,6 @@
       width: 100%
       td:first-child
         position: relative
-        &:hover:before
-          color: #333
-          font-size: 1em
-          content: '\0270E'
-          position: absolute
-          left: -1em
     input[type=submit]
       width: 100%
     input[type=text]
@@ -43,7 +63,6 @@
   .participant
     background-color: #EEE
   .match
-    cursor: move
     float: left
     background-color: #BBB
     border: 1px outset #666
@@ -81,16 +100,3 @@
       float: none
     header
       display: block
-  &:hover
-    input[type=text]
-      background-color: #DDD
-  input[type=text]
-    &:hover
-      background-color: #999
-      color: #EEE
-    &:focus
-      background-color: #333
-      color: #FFF
-    &.conflict, &.add.conflict
-      background-color: #900
-      color: #FEE

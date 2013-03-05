@@ -41,6 +41,9 @@
   }
 
   var group = function($container, participants, pairs, onchange) {
+    if (onchange)
+      $container.addClass('read-write')
+
     var templates = (function() {
       var standingsMarkup = Handlebars.compile(
         '<div class="standings">'
@@ -64,6 +67,10 @@
       return {
         standings: function(participantStream, renameStream, participants) {
           var markup = $(standingsMarkup(participants.value()))
+
+          if (!onchange)
+            return markup
+
           var $submit = markup.find('input[type=submit]')
 
           var keyUps = markup.find('input').asEventStream('keyup')
@@ -119,6 +126,10 @@
           return new function() {
             var r = $(template({ round: round, width: (100 / roundCount) }))
             this.markup = r
+
+            if (!onchange)
+              return
+
             r.asEventStream('dragover').doAction('.preventDefault').onValue(function(ev) { })
             r.asEventStream('dragenter').doAction('.preventDefault').map(evTarget).onValue(function($el) { $el.addClass('over') })
             r.asEventStream('dragleave').doAction('.preventDefault').map(evTarget).onValue(function($el) { $el.removeClass('over') })
@@ -139,7 +150,7 @@
     var Match = (function() {
       var id = 0
       var template = Handlebars.compile(
-        '<div data-matchId="{{id}}" class="match" draggable="true">'
+        '<div data-matchId="{{id}}" class="match" draggable="{{draggable}}">'
         +'<span class="home">{{a.name}}</span>'
         +'<input type="text" class="home" value="{{a.score}}" />'
         +'<input type="text" class="away" value="{{b.score}}" />'
@@ -150,8 +161,12 @@
         create: function(resultStream, match) {
           return new function() {
             var that = this
+            match.draggable = (onchange != null).toString()
             var markup = $(template(match))
             this.markup = markup
+
+            if (!onchange)
+              return
 
             var keyUps = markup.find('input').asEventStream('keyup')
               .map(evTarget)
@@ -246,7 +261,8 @@
     result.throttle(10).onValue(function(state) {
       console.log('New state created');
       console.log(state);
-      onchange(state.matches.value())
+      if (onchange)
+        onchange(state.matches.value())
     })
 
     participantAdds.merge(resultUpdates).throttle(10).onValue(function(state) {
@@ -269,7 +285,7 @@
         if ($match.length)
           $match.replaceWith(Match.create(resultStream, it).markup)
         else if (it.round)
-          $('div.round').filter('[data-roundId="'+it.round+'"]').append(Match.create(resultStream, it).markup)
+          $container.find('div.round').filter('[data-roundId="'+it.round+'"]').append(Match.create(resultStream, it).markup)
         else
           unassigned.append(Match.create(resultStream, it).markup)
       })
@@ -288,7 +304,7 @@
       return new group($('<div class="jqgroup"></div>').appendTo(container),
                        participants,
                        pairs,
-                       opts.onchange || function() {})
+                       opts.onchange || null)
     }
   }
 

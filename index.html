@@ -22,7 +22,7 @@ $(function() {
     $('pre').text(JSON.stringify(state, undefined, 2))
 
     // Update read-only version of the component
-    //$('#view').group({ pairs: pairs.value(), init: state })
+    $('#view').empty().group({ pairs: pairs.value(), init: state })
   }
 
   var participants = _(["a", "b", "c", "d", "e"])
@@ -60,9 +60,9 @@ $(function() {
   <pre id="state"></pre>
 </div>
 <div id="components">
-  <h2>Editor</h2>
+  <h2>Editor ("read-write")</h2>
   <div id="editor"></div>
-  <h2>View</h2>
+  <h2>View ("read-only")</h2>
   <div id="view"></div>
 </div>
 </body>
