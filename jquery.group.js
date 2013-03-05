@@ -182,6 +182,7 @@
         create: function(resultStream, match) {
           return new function() {
             var that = this
+            match = $.extend({}, match)
             match.draggable = (onchange != null).toString()
 
             if (!onchange) {
