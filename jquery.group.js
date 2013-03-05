@@ -45,6 +45,20 @@
       $container.addClass('read-write')
 
     var templates = (function() {
+      var readOnlyMarkup = Handlebars.compile(
+        '<div class="standings">'
+        +'Standings'
+        +'<table>'
+        +'<colgroup>'
+        +'<col style="width: 60%">'
+        +'<col span="4" style="width: 10%">'
+        +'</colgroup>'
+        +'<tr><th>Name</th><th>W</th><th>L</th><th>T</th><th>P</tr>'
+        +'{{#each this}}'
+        +'<tr><td>{{name}}</td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>'
+        +'{{/each}}'
+        +'</table>'
+        +'</div>')
       var standingsMarkup = Handlebars.compile(
         '<div class="standings">'
         +'Standings'
@@ -66,11 +80,10 @@
         '<div class="unassigned"><header>Unassigned</header></div>')
       return {
         standings: function(participantStream, renameStream, participants) {
-          var markup = $(standingsMarkup(participants.value()))
-
           if (!onchange)
-            return markup
+            return $(readOnlyMarkup(participants.value()))
 
+          var markup = $(standingsMarkup(participants.value()))
           var $submit = markup.find('input[type=submit]')
 
           var keyUps = markup.find('input').asEventStream('keyup')
@@ -149,6 +162,14 @@
 
     var Match = (function() {
       var id = 0
+      var readOnlyTemplate = Handlebars.compile(
+        '<div data-matchId="{{id}}" class="match" draggable="{{draggable}}">'
+        +'<span class="home">{{a.name}}</span>'
+        +'<div class="home">{{a.score}}</div>'
+        +'<div class="away">{{b.score}}</div>'
+        +'<span class="away">{{b.name}}</span>'
+        +'</div>')
+
       var template = Handlebars.compile(
         '<div data-matchId="{{id}}" class="match" draggable="{{draggable}}">'
         +'<span class="home">{{a.name}}</span>'
@@ -162,11 +183,14 @@
           return new function() {
             var that = this
             match.draggable = (onchange != null).toString()
+
+            if (!onchange) {
+              this.markup = $(readOnlyTemplate(match))
+              return
+            }
+
             var markup = $(template(match))
             this.markup = markup
-
-            if (!onchange)
-              return
 
             var keyUps = markup.find('input').asEventStream('keyup')
               .map(evTarget)

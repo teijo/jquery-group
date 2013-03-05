@@ -35,6 +35,8 @@
       width: 100%
       td:first-child
         position: relative
+      &.add
+        background-color: #999
     input[type=submit]
       width: 100%
     input[type=text]
@@ -63,13 +65,15 @@
   .participant
     background-color: #EEE
   .match
+    min-width: 50px
     float: left
     background-color: #BBB
     border: 1px outset #666
     padding: 3px 10px
     margin: 2px
     text-align: center
-    input[type=text]
+    input[type=text], div
+      display: inline-block
       font-size: 16px
       font-weight: bold
       width: 15%

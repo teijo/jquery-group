@@ -39,6 +39,9 @@
 .jqgroup .standings table td:first-child {
   position: relative;
 }
+.jqgroup .standings table.add {
+  background-color: #999999;
+}
 .jqgroup .standings input[type=submit] {
   width: 100%;
 }
@@ -76,6 +79,7 @@
   background-color: #eeeeee;
 }
 .jqgroup .match {
+  min-width: 50px;
   float: left;
   background-color: #bbbbbb;
   border: 1px outset #666666;
@@ -83,7 +87,8 @@
   margin: 2px;
   text-align: center;
 }
-.jqgroup .match input[type=text] {
+.jqgroup .match input[type=text], .jqgroup .match div {
+  display: inline-block;
   font-size: 16px;
   font-weight: bold;
   width: 15%;
