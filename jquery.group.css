@@ -31,7 +31,9 @@
 }
 .jqgroup .standings {
   float: left;
-  width: 20%;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 50%;
 }
 .jqgroup .standings table {
   width: 100%;
@@ -64,13 +66,13 @@
 .jqgroup .rounds {
   float: right;
   background-color: #999999;
-  width: 80%;
+  width: 50%;
 }
 .jqgroup .unassigned {
   float: right;
   position: relative;
   background-color: #aaaaaa;
-  width: 80%;
+  width: 50%;
 }
 .jqgroup .unassigned .match {
   max-width: 100px;
@@ -83,7 +85,6 @@
   float: left;
   background-color: #bbbbbb;
   border: 1px outset #666666;
-  padding: 3px 10px;
   margin: 2px;
   text-align: center;
 }
@@ -100,21 +101,24 @@
 }
 .jqgroup .match span {
   display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .jqgroup .match span.home {
-  width: 30%;
+  width: 70%;
   text-align: left;
 }
 .jqgroup .match span.away {
-  width: 30%;
-  text-align: right;
+  width: 70%;
+  text-align: left;
 }
 .jqgroup .round {
   width: 25%;
   background-color: #888888;
   float: left;
-  height: 200px;
+  clear: both;
   display: inline-block;
+  padding-bottom: 20px;
 }
 .jqgroup .round.droppable {
   background-color: #88cc88;

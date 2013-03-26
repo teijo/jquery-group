@@ -15,6 +15,7 @@ body { padding: 1%; }
 pre { background-color: #EEE; max-height: 500px; overflow-y: scroll; }
 #data { float: right; width: 28%; margin-left: 2%; }
 #components { float: left; width: 68%; margin-right: 2%; }
+#view { -moz-transition: all 0.5s; -webkit-transition: all 0.5s; }
 </style>
 <script type='text/javascript'>
 $(function() {
@@ -25,7 +26,7 @@ $(function() {
     $('#view').empty().group({ pairs: pairs.value(), init: state })
   }
 
-  var participants = _(["a", "b", "c", "d", "e"])
+  var participants = _(["Red Tornadoes", "Venomous Planets", "Crimson Legends", "Deadly Slammers", "Dolphin Crunchers"])
   var pairs = participants.map(function(it, i) {
     return participants.filter(function(_, j) { return j < i }).map(function(it2) {
       return { round: ~~(Math.random()*10)%5,
@@ -51,6 +52,14 @@ $(function() {
     })();
   }
   //]]>
+</script>
+<script type='text/javascript'>
+$(function() {
+  var $container = $('#view')
+  Bacon.repeatedly(1000, [200, 400, 600, 800]).onValue(function(length) {
+    $container.css('width', length)
+  })
+})
 </script>
 </head>
 <body>

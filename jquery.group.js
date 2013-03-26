@@ -137,7 +137,7 @@
       return {
         create: function(moveStream, round, roundCount) {
           return new function() {
-            var r = $(template({ round: round, width: (100 / roundCount) }))
+            var r = $(template({ round: round, width: 100 /*(100 / roundCount)*/ }))
             this.markup = r
 
             if (!onchange)
@@ -166,16 +166,16 @@
         '<div data-matchId="{{id}}" class="match" draggable="{{draggable}}">'
         +'<span class="home">{{a.name}}</span>'
         +'<div class="home">{{a.score}}</div>'
-        +'<div class="away">{{b.score}}</div>'
         +'<span class="away">{{b.name}}</span>'
+        +'<div class="away">{{b.score}}</div>'
         +'</div>')
 
       var template = Handlebars.compile(
         '<div data-matchId="{{id}}" class="match" draggable="{{draggable}}">'
         +'<span class="home">{{a.name}}</span>'
         +'<input type="text" class="home" value="{{a.score}}" />'
-        +'<input type="text" class="away" value="{{b.score}}" />'
         +'<span class="away">{{b.name}}</span>'
+        +'<input type="text" class="away" value="{{b.score}}" />'
         +'</div>')
 
       return {

@@ -30,7 +30,9 @@
   display: inline-block
   .standings
     float: left
-    width: 20%
+    white-space: nowrap
+    overflow: hidden
+    width: 50%
     table
       width: 100%
       td:first-child
@@ -54,12 +56,12 @@
   .rounds
     float: right
     background-color: #999
-    width: 80%
+    width: 50%
   .unassigned
     float: right
     position: relative
     background-color: #AAA
-    width: 80%
+    width: 50%
     .match
       max-width: 100px
   .participant
@@ -69,7 +71,6 @@
     float: left
     background-color: #BBB
     border: 1px outset #666
-    padding: 3px 10px
     margin: 2px
     text-align: center
     input[type=text], div
@@ -84,18 +85,21 @@
       background-color: #BBB
     span
       display: inline-block
+      white-space: nowrap
+      overflow: hidden
     span.home
-      width: 30%
+      width: 70%
       text-align: left
     span.away
-      width: 30%
-      text-align: right
+      width: 70%
+      text-align: left
   .round
     width: 25%
     background-color: #888
     float: left
-    height: 200px
+    clear: both
     display: inline-block
+    padding-bottom: 20px
     &.droppable
       background-color: #8C8
       &.over
