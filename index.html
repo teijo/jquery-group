@@ -26,10 +26,11 @@ $(function() {
     $('#view').empty().group({ pairs: pairs.value(), init: state })
   }
 
-  var participants = _(["Red Tornadoes", "Venomous Planets", "Crimson Legends", "Deadly Slammers", "Dolphin Crunchers"])
+  var participants = _(["Red Tornadoes", "Venomous Planets", "Crimson Legends", "Deadly Slammers"])
+  var roundCount = participants.size() - 1 + (participants.size() % 2)
   var pairs = participants.map(function(it, i) {
     return participants.filter(function(_, j) { return j < i }).map(function(it2) {
-      return { round: ~~(Math.random()*10)%5,
+      return { round: ~~(Math.random()*10)%roundCount,
               a: { name: it,  score: ~~(Math.random()*10)%10 },
               b: { name: it2, score: ~~(Math.random()*10)%10 } }
     }).value()
