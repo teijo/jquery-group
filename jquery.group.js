@@ -1,6 +1,11 @@
 (function($) {
   var numberRe = new RegExp(/^[0-9]+$/)
 
+  // 2n teams -> n-1 rounds, 2n+1 teams -> n rounds
+  function roundCount(participantCount) {
+    return participantCount - 1 + (participantCount % 2);
+  }
+
   function toIntOrNull(string) {
     if (!numberRe.test(string))
       return null
@@ -224,6 +229,9 @@
       }
     })()
 
+    var $standings = $('<div class="standings"></div>').appendTo($container)
+    var $rounds = templates.rounds.appendTo($container)
+
     var matchStream = new Bacon.Bus()
     var participantStream = new Bacon.Bus()
     var renameStream = new Bacon.Bus()
@@ -239,6 +247,12 @@
         propertyValue.matches = propertyValue.matches.union(newMatches.value())
       }
       propertyValue.participants.push(streamValue)
+
+      var rounds = roundCount(propertyValue.participants.size())
+      _(_.range($container.find('.round').length, rounds)).each(function(it) {
+        $rounds.append(Round.create(moveStream, it+1, rounds).markup)
+      })
+
       return propertyValue
     })
     var resultUpdates = matchProp.sampledBy(resultStream, function(propertyValue, streamValue) {
@@ -294,15 +308,7 @@
       $container.find('.standings').replaceWith(templates.standings(participantStream, renameStream, makeStandings(state.participants, state.matches)))
     })
 
-    var $standings = $('<div class="standings"></div>').appendTo($container)
     $standings.replaceWith(templates.standings(participantStream))
-
-    var rounds = templates.rounds.appendTo($container)
-    // 2n teams -> n-1 rounds, 2n+1 teams -> n rounds
-    var roundCount = participants.size() - 1 + (participants.size() % 2)
-    _(_.range(roundCount)).each(function(it) {
-      rounds.append(Round.create(moveStream, it+1, roundCount).markup)
-    })
 
     var unassigned = templates.unassigned.appendTo($container)
     participantRenames.merge(participantAdds).merge(resultUpdates).throttle(10).onValue(function(state) {
