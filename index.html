@@ -15,30 +15,19 @@ body { padding: 1%; }
 pre { background-color: #EEE; max-height: 500px; overflow-y: scroll; }
 #data { float: right; width: 28%; margin-left: 2%; }
 #components { float: left; width: 68%; margin-right: 2%; }
-#view { -moz-transition: all 0.5s; -webkit-transition: all 0.5s; }
+#view { width: 100%; -moz-transition: all 3s; -webkit-transition: all 3s; }
+script.demo { display: block; white-space: pre; font-family: monospace; background-color: #EEE; padding: 1em; }
 </style>
 <script type='text/javascript'>
-$(function() {
-  function changeCallback(state) {
-    $('pre').text(JSON.stringify(state, undefined, 2))
-
-    // Update read-only version of the component
-    $('#view').empty().group({ pairs: pairs.value(), init: state })
-  }
-
-  var participants = _(["Red Tornadoes", "Venomous Planets", "Crimson Legends", "Deadly Slammers"])
-  var roundCount = participants.size() - 1 + (participants.size() % 2)
-  var pairs = participants.map(function(it, i) {
-    return participants.filter(function(_, j) { return j < i }).map(function(it2) {
-      return { round: ~~(Math.random()*10)%(roundCount + 1),
-              a: { name: it,  score: ~~(Math.random()*10)%10 },
-              b: { name: it2, score: ~~(Math.random()*10)%10 } }
-    }).value()
-  }).flatten(true)
-
-  $('#editor').group({ pairs: pairs.value(), onchange: changeCallback })
-  $('#empty').group({ onchange: function() {} })
-})
+var participants = _(["Red Tornadoes", "Venomous Planets", "Crimson Legends", "Deadly Slammers"])
+var roundCount = participants.size() - 1 + (participants.size() % 2)
+var pairs = participants.map(function(it, i) {
+  return participants.filter(function(_, j) { return j < i }).map(function(it2) {
+    return { round: ~~(Math.random()*10)%(roundCount + 1),
+            a: { name: it,  score: ~~(Math.random()*10)%10 },
+            b: { name: it2, score: ~~(Math.random()*10)%10 } }
+  }).value()
+}).flatten(true)
 </script>
 <title>jQuery group</title>
 <script type='text/javascript'>
@@ -58,25 +47,39 @@ $(function() {
 <script type='text/javascript'>
 $(function() {
   var $container = $('#view')
-  Bacon.repeatedly(1000, [200, 400, 600, 800]).onValue(function(length) {
-    $container.css('width', length)
+  Bacon.repeatedly(3000, [40, 100]).onValue(function(length) {
+    $container.css('width', length+"%")
   })
 })
 </script>
 </head>
 <body>
 <h1>Round-robin tournament group editor</h1>
+Get latest code from project <a href="https://github.com/teijo/jquery-group">Github repository</a>
+<h2>Empty</h2>
+<div id="empty"></div>
+<script class="demo" type="text/javascript"
+    >$('#empty').group({ onchange: function() {} })
+</script>
 <div id="data">
   <h2>State</h2>
   <pre id="state"></pre>
 </div>
 <div id="components">
-  <h2>Editor ("read-write")</h2>
-  <div id="editor"></div>
-  <h2>View ("read-only")</h2>
-  <div id="view"></div>
-  <h2>Empty</h2>
-  <div id="empty"></div>
+<h2>View ("read-only")</h2>
+<div id="view"></div>
+<script class="demo" type="text/javascript"
+>// This is actually called by the next example
+function changeCallback(state) {
+  $('pre').text(JSON.stringify(state, undefined, 2))
+
+  // Update read-only version of the component
+  $('#view').empty().group({ pairs: pairs.value(), init: state })
+}
+</script>
+<h2>Editor ("read-write")</h2>
+<div id="editor"></div>
+<script class="demo" type="text/javascript">$('#editor').group({ pairs: pairs.value(), onchange: changeCallback })</script>
 </div>
 </body>
 </html>
