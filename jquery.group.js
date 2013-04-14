@@ -80,9 +80,9 @@
         '<div class="unassigned"><header>Unassigned</header></div>')
       return {
         standings: function(participantStream, renameStream, participants) {
+          participants = participants || _([])
           if (!onchange)
             return $(readOnlyMarkup(participants.value()))
-
           var markup = $(standingsMarkup(participants.value()))
           var $submit = markup.find('input[type=submit]')
 
@@ -294,7 +294,9 @@
       $container.find('.standings').replaceWith(templates.standings(participantStream, renameStream, makeStandings(state.participants, state.matches)))
     })
 
-    $('<div class="standings"></div>').appendTo($container)
+    var $standings = $('<div class="standings"></div>').appendTo($container)
+    $standings.replaceWith(templates.standings(participantStream))
+
     var rounds = templates.rounds.appendTo($container)
     // 2n teams -> n-1 rounds, 2n+1 teams -> n rounds
     var roundCount = participants.size() - 1 + (participants.size() % 2)

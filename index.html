@@ -37,6 +37,7 @@ $(function() {
   }).flatten(true)
 
   $('#editor').group({ pairs: pairs.value(), onchange: changeCallback })
+  $('#empty').group({ onchange: function() {} })
 })
 </script>
 <title>jQuery group</title>
@@ -74,6 +75,8 @@ $(function() {
   <div id="editor"></div>
   <h2>View ("read-only")</h2>
   <div id="view"></div>
+  <h2>Empty</h2>
+  <div id="empty"></div>
 </div>
 </body>
 </html>
