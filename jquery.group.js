@@ -337,7 +337,7 @@
       return new group($('<div class="jqgroup"></div>').appendTo(container),
                        participants,
                        pairs,
-                       opts.onchange || null)
+                       opts.save || null)
     }
   }
 

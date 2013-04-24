@@ -59,7 +59,7 @@ Get latest code from project <a href="https://github.com/teijo/jquery-group">Git
 <h2>Empty</h2>
 <div id="empty"></div>
 <script class="demo" type="text/javascript"
-    >$('#empty').group({ onchange: function() {} })
+    >$('#empty').group({ save: function() {} })
 </script>
 <div id="data">
   <h2>State</h2>
@@ -79,7 +79,7 @@ function changeCallback(state) {
 </script>
 <h2>Editor ("read-write")</h2>
 <div id="editor"></div>
-<script class="demo" type="text/javascript">$('#editor').group({ init: testData, onchange: changeCallback })</script>
+<script class="demo" type="text/javascript">$('#editor').group({ init: testData, save: changeCallback })</script>
 </div>
 </body>
 </html>
