@@ -21,13 +21,13 @@ script.demo { display: block; white-space: pre; font-family: monospace; backgrou
 <script type='text/javascript'>
 var participants = _(["Red Tornadoes", "Venomous Planets", "Crimson Legends", "Deadly Slammers"])
 var roundCount = participants.size() - 1 + (participants.size() % 2)
-var pairs = participants.map(function(it, i) {
+var testData = participants.map(function(it, i) {
   return participants.filter(function(_, j) { return j < i }).map(function(it2) {
     return { round: ~~(Math.random()*10)%(roundCount + 1),
             a: { name: it,  score: ~~(Math.random()*10)%10 },
             b: { name: it2, score: ~~(Math.random()*10)%10 } }
   }).value()
-}).flatten(true)
+}).flatten(true).value()
 </script>
 <title>jQuery group</title>
 <script type='text/javascript'>
@@ -74,12 +74,12 @@ function changeCallback(state) {
   $('pre').text(JSON.stringify(state, undefined, 2))
 
   // Update read-only version of the component
-  $('#view').empty().group({ pairs: pairs.value(), init: state })
+  $('#view').empty().group({ init: state })
 }
 </script>
 <h2>Editor ("read-write")</h2>
 <div id="editor"></div>
-<script class="demo" type="text/javascript">$('#editor').group({ pairs: pairs.value(), onchange: changeCallback })</script>
+<script class="demo" type="text/javascript">$('#editor').group({ init: testData, onchange: changeCallback })</script>
 </div>
 </body>
 </html>

@@ -332,7 +332,7 @@
     init: function(opts) {
       opts = opts || {}
       var container = this
-      var pairs = _(opts.pairs)
+      var pairs = _(opts.init)
       var participants = pairs.pluck('a').union(pairs.pluck('b').value()).pluck('name').unique()
       return new group($('<div class="jqgroup"></div>').appendTo(container),
                        participants,
