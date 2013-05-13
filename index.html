@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="description" content="jQuery plugin for tournament group stages" />
+<meta name="description" content="jQuery plugin for visualizing and editing tournament group stages" />
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <script type="text/javascript" src="lib/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="lib/Bacon-1ab32ffb.min.js"></script>
@@ -15,7 +15,7 @@ body { padding: 1%; }
 pre { background-color: #EEE; max-height: 500px; overflow-y: scroll; }
 #data { float: right; width: 28%; margin-left: 2%; }
 #components { float: left; width: 68%; margin-right: 2%; }
-#view { width: 100%; -moz-transition: all 3s; -webkit-transition: all 3s; height: 300px; overflow: hidden; }
+#view { width: 100%; -moz-transition: all 10s; -webkit-transition: all 10s; height: 300px; overflow: hidden; }
 script.demo { display: block; white-space: pre; font-family: monospace; background-color: #EEE; padding: 1em; }
 h2 { clear: both; }
 </style>
@@ -212,7 +212,7 @@ var testData = participants.map(function(it, i) {
   }).value()
 }).flatten(true).value()
 </script>
-<title>jQuery group</title>
+<title>jQuery Group</title>
 <script type='text/javascript'>
   //<![CDATA[
   if (window.location.host != "localhost") {
@@ -230,7 +230,7 @@ var testData = participants.map(function(it, i) {
 <script type='text/javascript'>
 $(function() {
   var $container = $('#view')
-  Bacon.repeatedly(3000, [40, 100]).onValue(function(length) {
+  Bacon.repeatedly(10000, [40, 100]).onValue(function(length) {
     $container.css('width', length+"%")
   })
 })
@@ -245,11 +245,16 @@ Get latest code from project <a href="https://github.com/teijo/jquery-group">Git
     >$('#empty').group({ save: function() {} })
 </script>
 <div id="data">
-  <h2>State</h2>
+  <h2>Editor state</h2>
+  <p>JSON state of the editor that can be passed to initialize a new plugin.</p>
   <pre id="state"></pre>
 </div>
 <div id="components">
-<h2>View ("read-only")</h2>
+<h2>Editor with random data</h2>
+<p>Edit group information. Add and rename teams from standings view. Drag and drop matches between rounds. Edit scores from matches.</p>
+<div id="editor"></div>
+<h2>View to the editor</h2>
+<p>Modify the results in the editor above to see changes in this view.</p>
 <div id="view"></div>
 <script class="demo" type="text/javascript"
 >// This is actually called by the next example
@@ -260,8 +265,6 @@ function changeCallback(state) {
   $('#view').empty().group({ init: state })
 }
 </script>
-<h2>Editor ("read-write")</h2>
-<div id="editor"></div>
 <script class="demo" type="text/javascript">$('#editor').group({ init: testData, save: changeCallback })</script>
 </div>
 
