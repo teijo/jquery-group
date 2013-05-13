@@ -15,10 +15,193 @@ body { padding: 1%; }
 pre { background-color: #EEE; max-height: 500px; overflow-y: scroll; }
 #data { float: right; width: 28%; margin-left: 2%; }
 #components { float: left; width: 68%; margin-right: 2%; }
-#view { width: 100%; -moz-transition: all 3s; -webkit-transition: all 3s; }
+#view { width: 100%; -moz-transition: all 3s; -webkit-transition: all 3s; height: 300px; overflow: hidden; }
 script.demo { display: block; white-space: pre; font-family: monospace; background-color: #EEE; padding: 1em; }
+h2 { clear: both; }
 </style>
 <script type='text/javascript'>
+var groupData = [
+  {
+    "id": 0,
+    "round": 1,
+    "a": {
+      "name": "YoDa[sk,t]",
+      "score": 1
+    },
+    "b": {
+      "name": "First[sk,p]",
+      "score": 2
+    }
+  },
+  {
+    "id": 1,
+    "round": 1,
+    "a": {
+      "name": "YoDa[sk,t]",
+      "score": 2
+    },
+    "b": {
+      "name": "MC[sk,p]",
+      "score": 1
+    }
+  },
+  {
+    "id": 2,
+    "round": 1,
+    "a": {
+      "name": "First[sk,p]",
+      "score": 2
+    },
+    "b": {
+      "name": "MC[sk,p]",
+      "score": 1
+    }
+  },
+  {
+    "id": 3,
+    "round": 2,
+    "a": {
+      "name": "YoDa[sk,t]",
+      "score": 2
+    },
+    "b": {
+      "name": "Ret[fr,z]",
+      "score": 0
+    }
+  },
+  {
+    "id": 4,
+    "round": 2,
+    "a": {
+      "name": "First[sk,p]",
+      "score": 0
+    },
+    "b": {
+      "name": "Ret[fr,z]",
+      "score": 2
+    }
+  },
+  {
+    "id": 5,
+    "round": 2,
+    "a": {
+      "name": "MC[sk,p]",
+      "score": 0
+    },
+    "b": {
+      "name": "Ret[fr,z]",
+      "score": 2
+    }
+  },
+  {
+    "id": 6,
+    "round": 3,
+    "a": {
+      "name": "YoDa[sk,t]",
+      "score": 2
+    },
+    "b": {
+      "name": "Kas[uk,t]",
+      "score": 1
+    }
+  },
+  {
+    "id": 7,
+    "round": 3,
+    "a": {
+      "name": "First[sk,p]",
+      "score": 2
+    },
+    "b": {
+      "name": "Kas[uk,t]",
+      "score": 0
+    }
+  },
+  {
+    "id": 8,
+    "round": 3,
+    "a": {
+      "name": "MC[sk,p]",
+      "score": 2
+    },
+    "b": {
+      "name": "Kas[uk,t]",
+      "score": 0
+    }
+  },
+  {
+    "id": 9,
+    "round": 4,
+    "a": {
+      "name": "Ret[fr,z]",
+      "score": 2
+    },
+    "b": {
+      "name": "Kas[uk,t]",
+      "score": 1
+    }
+  },
+  {
+    "id": 10,
+    "round": 4,
+    "a": {
+      "name": "YoDa[sk,t]",
+      "score": 2
+    },
+    "b": {
+      "name": "XIorD[de,z]",
+      "score": 0
+    }
+  },
+  {
+    "id": 11,
+    "round": 4,
+    "a": {
+      "name": "First[sk,p]",
+      "score": 2
+    },
+    "b": {
+      "name": "XIorD[de,z]",
+      "score": 1
+    }
+  },
+  {
+    "id": 12,
+    "round": 5,
+    "a": {
+      "name": "MC[sk,p]",
+      "score": 2
+    },
+    "b": {
+      "name": "XIorD[de,z]",
+      "score": 1
+    }
+  },
+  {
+    "id": 13,
+    "round": 5,
+    "a": {
+      "name": "Ret[fr,z]",
+      "score": 2
+    },
+    "b": {
+      "name": "XIorD[de,z]",
+      "score": 0
+    }
+  },
+  {
+    "id": 14,
+    "round": 5,
+    "a": {
+      "name": "Kas[uk,t]",
+      "score": 2
+    },
+    "b": {
+      "name": "XIorD[de,z]",
+      "score": 1
+    }
+  }
+]
 var participants = _(["Red Tornadoes", "Venomous Planets", "Crimson Legends", "Deadly Slammers"])
 var roundCount = participants.size() - 1 + (participants.size() % 2)
 var testData = participants.map(function(it, i) {
@@ -81,5 +264,12 @@ function changeCallback(state) {
 <div id="editor"></div>
 <script class="demo" type="text/javascript">$('#editor').group({ init: testData, save: changeCallback })</script>
 </div>
+
+<h2>Starcraft 2 tournament demo</h2>
+<p>IEM Season VII - World Championship group B, data from <a href="http://wiki.teamliquid.net/starcraft2/IEM_Season_VII_-_World_Championship">Liquipedia</a></p>
+<div id="sc2demo"></div>
+<script class="demo" type='text/javascript'>
+$(function() { $('#sc2demo').group({ init: groupData }) })
+</script>
 </body>
 </html>
