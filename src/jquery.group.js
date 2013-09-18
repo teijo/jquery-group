@@ -207,8 +207,9 @@
             markup.find('input').asEventStream('change').onValue(function() {
               var scoreA = toIntOrNull(markup.find('input.home').val())
               var scoreB = toIntOrNull(markup.find('input.away').val())
-              if (scoreA === null || scoreB === null)
+              if (scoreA === null || scoreB === null) {
                 return
+              }
               var update = { a: { name: match.a.name, score: scoreA },
                              b: { name: match.b.name, score: scoreB } }
               resultStream.push(update)
