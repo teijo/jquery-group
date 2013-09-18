@@ -46,10 +46,35 @@
   group = ($container, participants, pairs, onchange) ->
     $container.addClass "read-write"  if onchange
     templates = (->
-      readOnlyMarkup = Handlebars.compile("<div class=\"standings\">" + "Standings" + "<table>" + "<colgroup>" + "<col style=\"width: 60%\">" + "<col span=\"4\" style=\"width: 10%\">" + "</colgroup>" + "<tr><th>Name</th><th>W</th><th>L</th><th>T</th><th>P</tr>" + "{{#each this}}" + "<tr><td>{{name}}</td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>" + "{{/each}}" + "</table>" + "</div>")
-      standingsMarkup = Handlebars.compile("<div class=\"standings\">" + "Standings" + "<table>" + "<colgroup>" + "<col style=\"width: 60%\">" + "<col span=\"4\" style=\"width: 10%\">" + "</colgroup>" + "<tr><th>Name</th><th>W</th><th>L</th><th>T</th><th>P</tr>" + "{{#each this}}" + "<tr><td><input class=\"name\" type=\"text\" data-prev=\"{{name}}\" value=\"{{name}}\" /></td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>" + "{{/each}}" + "<tr><td><input class=\"add\" type=\"text\" value=\"{{name}}\" /></td><td colspan=\"4\"><input type=\"submit\" value=\"Add\" disabled=\"disabled\" /></td></tr>" + "</table>" + "</div>")
-      roundsMarkup = Handlebars.compile("<div class=\"rounds\"></div>")
-      unassignedMarkup = Handlebars.compile("<div class=\"unassigned\"><header>Unassigned</header></div>")
+      readOnlyMarkup = Handlebars.compile("""<div class=\"standings\">
+        Standings
+        <table>
+        <colgroup>
+        <col style=\"width: 60%\">
+        <col span=\"4\" style=\"width: 10%\">
+        </colgroup>
+        <tr><th>Name</th><th>W</th><th>L</th><th>T</th><th>P</tr>
+        {{#each this}}
+        <tr><td>{{name}}</td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>
+        {{/each}}
+        </table>
+        </div>""")
+      standingsMarkup = Handlebars.compile("""<div class=\"standings\">
+        Standings
+        <table>
+        <colgroup>
+        <col style=\"width: 60%\">
+        <col span=\"4\" style=\"width: 10%\">
+        </colgroup>
+        <tr><th>Name</th><th>W</th><th>L</th><th>T</th><th>P</tr>
+        {{#each this}}
+        <tr><td><input class=\"name\" type=\"text\" data-prev=\"{{name}}\" value=\"{{name}}\" /></td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>
+        {{/each}}
+        <tr><td><input class=\"add\" type=\"text\" value=\"{{name}}\" /></td><td colspan=\"4\"><input type=\"submit\" value=\"Add\" disabled=\"disabled\" /></td></tr>
+        </table>
+        </div>""")
+      roundsMarkup = Handlebars.compile('<div class=\"rounds\"></div>')
+      unassignedMarkup = Handlebars.compile('<div class=\"unassigned\"><header>Unassigned</header></div>')
       standings: (participantStream, renameStream, participants) ->
         participants = participants or _([])
         return $(readOnlyMarkup(participants.value()))  unless onchange
@@ -93,7 +118,7 @@
       unassigned: $(unassignedMarkup())
     )()
     Round = (->
-      template = Handlebars.compile("<div data-roundId=\"{{round}}\" class=\"round\" style=\"width: {{width}}%\"><header>Round {{round}}</header></div>")
+      template = Handlebars.compile('<div data-roundId=\"{{round}}\" class=\"round\" style=\"width: {{width}}%\"><header>Round {{round}}</header></div>')
       create: (moveStream, round, roundCount) ->
         new ->
           r = $(template( #(100 / roundCount)
@@ -112,7 +137,7 @@
 
           r.asEventStream("drop").doAction(".preventDefault").map(evElTarget).onValues (ev, $el) ->
             id = ev.originalEvent.dataTransfer.getData("Text")
-            obj = $container.find("[data-matchId=\"" + id + "\"]")
+            obj = $container.find('[data-matchId=\"' + id + '\"]')
             $el.append obj
             $el.removeClass "over"
             moveStream.push
@@ -123,8 +148,18 @@
     )()
     Match = (->
       id = 0
-      readOnlyTemplate = Handlebars.compile("<div data-matchId=\"{{id}}\" class=\"match\" draggable=\"{{draggable}}\">" + "<span class=\"home\">{{a.name}}</span>" + "<div class=\"home\">{{a.score}}</div>" + "<span class=\"away\">{{b.name}}</span>" + "<div class=\"away\">{{b.score}}</div>" + "</div>")
-      template = Handlebars.compile("<div data-matchId=\"{{id}}\" class=\"match\" draggable=\"{{draggable}}\">" + "<span class=\"home\">{{a.name}}</span>" + "<input type=\"text\" class=\"home\" value=\"{{a.score}}\" />" + "<span class=\"away\">{{b.name}}</span>" + "<input type=\"text\" class=\"away\" value=\"{{b.score}}\" />" + "</div>")
+      readOnlyTemplate = Handlebars.compile("""<div data-matchId=\"{{id}}\" class=\"match\" draggable=\"{{draggable}}\">
+        <span class=\"home\">{{a.name}}</span>
+        <div class=\"home\">{{a.score}}</div>
+        <span class=\"away\">{{b.name}}</span>
+        <div class=\"away\">{{b.score}}</div>
+        </div>""")
+      template = Handlebars.compile("""<div data-matchId=\"{{id}}\" class=\"match\" draggable=\"{{draggable}}\">
+        <span class=\"home\">{{a.name}}</span>
+        <input type=\"text\" class=\"home\" value=\"{{a.score}}\" />
+        <span class=\"away\">{{b.name}}</span>
+        <input type=\"text\" class=\"away\" value=\"{{b.score}}\" />
+        </div>""")
       create: (resultStream, match) ->
         new ->
           that = this
@@ -163,7 +198,7 @@
             $container.find(".round").removeClass "droppable"
 
     )()
-    $standings = $("<div class=\"standings\"></div>").appendTo($container)
+    $standings = $('<div class=\"standings\"></div>').appendTo($container)
     $rounds = templates.rounds.appendTo($container)
     matchStream = new Bacon.Bus()
     participantStream = new Bacon.Bus()
@@ -244,11 +279,11 @@
     participantRenames.merge(participantAdds).merge(resultUpdates).throttle(10).onValue (state) ->
       $matches = $container.find(".match")
       state.matches.each (it) ->
-        $match = $matches.filter("[data-matchId=\"" + it.id + "\"]")
+        $match = $matches.filter('[data-matchId=\"' + it.id + '\"]')
         if $match.length
           $match.replaceWith Match.create(resultStream, it).markup
         else if it.round
-          $container.find("div.round").filter("[data-roundId=\"" + it.round + "\"]").append Match.create(resultStream, it).markup
+          $container.find("div.round").filter('[data-roundId=\"' + it.round + '\"]').append Match.create(resultStream, it).markup
         else
           unassigned.append Match.create(resultStream, it).markup
 
@@ -265,13 +300,13 @@
     container = this
     pairs = _(opts.init)
     participants = pairs.pluck("a").union(pairs.pluck("b").value()).pluck("name").unique()
-    new group($("<div class=\"jqgroup\"></div>").appendTo(container), participants, pairs, opts.save or null)
+    new group($('<div class=\"jqgroup\"></div>').appendTo(container), participants, pairs, opts.save or null)
 
   $.fn.group = (method) ->
     if methods[method]
-      methods[method].apply this, Array::slice.call(arguments_, 1)
+      methods[method].apply this, Array::slice.call(arguments, 1)
     else if typeof method is "object" or not method
-      methods.init.apply this, arguments_
+      methods.init.apply this, arguments
     else
       $.error "Method " + method + " does not exist on jQuery.group"
 ) jQuery
