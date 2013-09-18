@@ -117,99 +117,95 @@
       rounds: $(roundsMarkup())
       unassigned: $(unassignedMarkup())
     )()
-    Round = `(function() {
-      var template = Handlebars.compile(
-        '<div data-roundId="{{round}}" class="round" style="width: {{width}}%"><header>Round {{round}}</header></div>')
+    Round = (->
+      template = Handlebars.compile('<div data-roundId="{{round}}" class="round" style="width: {{width}}%"><header>Round {{round}}</header></div>')
+      create: (moveStream, round, roundCount) ->
+        new ->
+          r = $(template( #(100 / roundCount)
+            round: round
+            width: 100
+          ))
+          @markup = r
 
-      return {
-        create: function(moveStream, round, roundCount) {
-          return new function() {
-            var r = $(template({ round: round, width: 100 /*(100 / roundCount)*/ }))
-            this.markup = r
+          unless onchange
+            return
 
-            if (!onchange)
-              return
+          r.asEventStream("dragover").doAction(".preventDefault").onValue((ev) -> )
+          r.asEventStream("dragenter").doAction(".preventDefault").map(evTarget).onValue ($el) ->
+            $el.addClass "over"
+            return
 
-            r.asEventStream('dragover').doAction('.preventDefault').onValue(function(ev) { })
-            r.asEventStream('dragenter').doAction('.preventDefault').map(evTarget).onValue(function($el) { $el.addClass('over') })
-            r.asEventStream('dragleave').doAction('.preventDefault').map(evTarget).onValue(function($el) { $el.removeClass('over') })
-            r.asEventStream('drop').doAction('.preventDefault')
-              .map(evElTarget)
-              .onValues(function(ev, $el) {
-                var id = ev.originalEvent.dataTransfer.getData('Text')
-                var obj = $container.find('[data-matchId="'+id+'"]')
-                $el.append(obj)
-                $el.removeClass('over')
-                moveStream.push({ match: parseInt(id), round: parseInt($el.attr('data-roundId')) })
-              })
-          }
-        }
-      }
-    })()`
+          r.asEventStream("dragleave").doAction(".preventDefault").map(evTarget).onValue ($el) ->
+            $el.removeClass "over"
+            return
 
-    Match = `(function() {
-      var id = 0
-      var readOnlyTemplate = Handlebars.compile(
-        '<div data-matchId="{{id}}" class="match" draggable="{{draggable}}">'
-        +'<span class="home">{{a.name}}</span>'
-        +'<div class="home">{{a.score}}</div>'
-        +'<span class="away">{{b.name}}</span>'
-        +'<div class="away">{{b.score}}</div>'
-        +'</div>')
+          r.asEventStream("drop").doAction(".preventDefault").map(evElTarget).onValues (ev, $el) ->
+            id = ev.originalEvent.dataTransfer.getData("Text")
+            obj = $container.find("[data-matchId=\"" + id + "\"]")
+            $el.append obj
+            $el.removeClass "over"
+            moveStream.push
+              match: parseInt(id)
+              round: parseInt($el.attr("data-roundId"))
+            return
+          return
+    )()
 
-      var template = Handlebars.compile(
-        '<div data-matchId="{{id}}" class="match" draggable="{{draggable}}">'
-        +'<span class="home">{{a.name}}</span>'
-        +'<input type="text" class="home" value="{{a.score}}" />'
-        +'<span class="away">{{b.name}}</span>'
-        +'<input type="text" class="away" value="{{b.score}}" />'
-        +'</div>')
+    Match = (->
+      id = 0
+      readOnlyTemplate = Handlebars.compile('
+        <div data-matchId="{{id}}" class="match" draggable="{{draggable}}">
+        <span class="home">{{a.name}}</span>
+        <div class="home">{{a.score}}</div>
+        <span class="away">{{b.name}}</span>
+        <div class="away">{{b.score}}</div>
+        </div>')
+      template = Handlebars.compile('
+        <div data-matchId="{{id}}" class="match" draggable="{{draggable}}">
+        <span class="home">{{a.name}}</span>
+        <input type="text" class="home" value="{{a.score}}" />
+        <span class="away">{{b.name}}</span>
+        <input type="text" class="away" value="{{b.score}}" />
+        </div>')
+      create: (resultStream, match) ->
+        new ->
+          that = this
+          match = $.extend({}, match)
+          match.draggable = (onchange?).toString()
+          unless onchange
+            @markup = $(readOnlyTemplate(match))
+            return
+          markup = $(template(match))
+          @markup = markup
+          keyUps = markup.find("input").asEventStream("keyup").map(evTarget).onValue(($el) ->
+            $el.toggleClass "conflict", toIntOrNull($el.val()) is null
+          )
+          markup.find("input").asEventStream("change").onValue ->
+            scoreA = toIntOrNull(markup.find("input.home").val())
+            scoreB = toIntOrNull(markup.find("input.away").val())
+            return  if scoreA is null or scoreB is null
+            update =
+              a:
+                name: match.a.name
+                score: scoreA
 
-      return {
-        create: function(resultStream, match) {
-          return new function() {
-            var that = this
-            match = $.extend({}, match)
-            match.draggable = (onchange != null).toString()
+              b:
+                name: match.b.name
+                score: scoreB
 
-            if (!onchange) {
-              this.markup = $(readOnlyTemplate(match))
-              return
-            }
+            resultStream.push update
 
-            var markup = $(template(match))
-            this.markup = markup
+          markup.asEventStream("dragstart").map(".originalEvent").map(evElTarget).onValues (ev, $el) ->
+            ev.dataTransfer.setData "Text", match.id
+            $el.css "opacity", 0.5
+            $container.find(".round").addClass "droppable"
 
-            var keyUps = markup.find('input').asEventStream('keyup')
-              .map(evTarget)
-              .onValue(function($el) {
-                $el.toggleClass('conflict', toIntOrNull($el.val()) === null)
-              })
+          markup.asEventStream("dragend").map(".originalEvent").map(evElTarget).onValues (ev, $el) ->
+            $el.css "opacity", 1.0
+            $container.find(".round").removeClass "droppable"
 
-            markup.find('input').asEventStream('change').onValue(function() {
-              var scoreA = toIntOrNull(markup.find('input.home').val())
-              var scoreB = toIntOrNull(markup.find('input.away').val())
-              if (scoreA === null || scoreB === null)
-                return
-              var update = { a: { name: match.a.name, score: scoreA },
-                             b: { name: match.b.name, score: scoreB } }
-              resultStream.push(update)
-            })
-
-            markup.asEventStream('dragstart').map(".originalEvent").map(evElTarget).onValues(function(ev, $el) {
-              ev.dataTransfer.setData('Text', match.id)
-              $el.css('opacity', 0.5)
-              $container.find('.round').addClass('droppable')
-            })
-
-            markup.asEventStream('dragend').map(".originalEvent").map(evElTarget).onValues(function(ev, $el) {
-              $el.css('opacity', 1.0)
-              $container.find('.round').removeClass('droppable')
-            })
-          }
-        }
-      }
-    })()`
+          return
+    )()
 
     $standings = $('<div class="standings"></div>').appendTo($container)
     $rounds = templates.rounds.appendTo($container)
