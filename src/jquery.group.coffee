@@ -46,7 +46,8 @@
   group = ($container, participants, pairs, onchange) ->
     $container.addClass "read-write"  if onchange
     templates = (->
-      readOnlyMarkup = Handlebars.compile("""<div class="standings">
+      readOnlyMarkup = Handlebars.compile('
+        <div class="standings">
         Standings
         <table>
         <colgroup>
@@ -58,8 +59,9 @@
         <tr><td>{{name}}</td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>
         {{/each}}
         </table>
-        </div>""")
-      standingsMarkup = Handlebars.compile("""<div class="standings">
+        </div>')
+      standingsMarkup = Handlebars.compile('
+        <div class="standings">
         Standings
         <table>
         <colgroup>
@@ -72,7 +74,7 @@
         {{/each}}
         <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="4"><input type="submit" value="Add" disabled="disabled" /></td></tr>
         </table>
-        </div>""")
+        </div>')
       roundsMarkup = Handlebars.compile('<div class="rounds"></div>')
       unassignedMarkup = Handlebars.compile('<div class="unassigned"><header>Unassigned</header></div>')
       standings: (participantStream, renameStream, participants) ->
