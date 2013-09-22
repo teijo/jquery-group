@@ -169,15 +169,15 @@
         <div data-matchId="{{id}}" class="match" draggable="{{draggable}}">
         <span class="home">{{a.name}}</span>
         <div class="home">{{a.score}}</div>
-        <span class="away">{{b.name}}</span>
         <div class="away">{{b.score}}</div>
+        <span class="away">{{b.name}}</span>
         </div>')
       template = Handlebars.compile('
         <div data-matchId="{{id}}" class="match" draggable="{{draggable}}">
         <span class="home">{{a.name}}</span>
         <input type="text" class="home" value="{{a.score}}" />
-        <span class="away">{{b.name}}</span>
         <input type="text" class="away" value="{{b.score}}" />
+        <span class="away">{{b.name}}</span>
         </div>')
       create: (resultStream, match) ->
         new ->

@@ -1,6 +1,8 @@
 .jqgroup.read-write
   .match
     cursor: move
+  .round
+    padding-bottom: 20px
   &:hover
     input[type=text]
       background-color: #DDD
@@ -29,10 +31,8 @@
   background-color: #CCC
   display: inline-block
   .standings
-    float: left
     white-space: nowrap
     overflow: hidden
-    width: 50%
     table
       width: 100%
       td:first-child
@@ -54,21 +54,14 @@
     th:first-child
       text-align: left
   .rounds
-    float: right
     background-color: #999
-    width: 50%
   .unassigned
-    float: right
     position: relative
     background-color: #AAA
-    width: 50%
-    .match
-      max-width: 100px
   .participant
     background-color: #EEE
   .match
     min-width: 50px
-    float: left
     background-color: #BBB
     border: 1px outset #666
     margin: 2px
@@ -77,8 +70,8 @@
       display: inline-block
       font-size: 16px
       font-weight: bold
-      width: 15%
-      margin: 0 2.5%
+      width: 10%
+      margin: 0 1%
       border: none
       border-radius: 2px
       text-align: center
@@ -88,18 +81,16 @@
       white-space: nowrap
       overflow: hidden
     span.home
-      width: 70%
-      text-align: left
+      width: 35%
+      text-align: right
     span.away
-      width: 70%
+      width: 35%
       text-align: left
   .round
     width: 25%
     background-color: #888
-    float: left
     clear: both
     display: inline-block
-    padding-bottom: 20px
     &.droppable
       background-color: #8C8
       &.over
