@@ -1,16 +1,19 @@
 (($) ->
-  
   # 2n teams -> n-1 rounds, 2n+1 teams -> n rounds
   roundCount = (participantCount) ->
     participantCount - 1 + (participantCount % 2)
+
   toIntOrNull = (string) ->
     return null  unless numberRe.test(string)
     value = parseInt(string)
     (if isNaN(value) then null else value)
+
   evTarget = (ev) ->
     $ ev.target
+
   evElTarget = (ev) ->
     [ev, evTarget(ev)]
+
   makeStandings = (participants, pairs) ->
     participants.map((it) ->
       matches = pairs.filter((match) ->
@@ -43,6 +46,7 @@
       -it.points
 
   numberRe = new RegExp(/^[0-9]+$/)
+
   group = ($container, participants, pairs, onchange) ->
     $container.addClass "read-write"  if onchange
     templates = (->
@@ -60,6 +64,7 @@
         {{/each}}
         </table>
         </div>')
+
       standingsMarkup = Handlebars.compile('
         <div class="standings">
         Standings
@@ -75,13 +80,16 @@
         <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="4"><input type="submit" value="Add" disabled="disabled" /></td></tr>
         </table>
         </div>')
+
       roundsMarkup = Handlebars.compile('<div class="rounds"></div>')
       unassignedMarkup = Handlebars.compile('<div class="unassigned"><header>Unassigned</header></div>')
+
       standings: (participantStream, renameStream, participants) ->
         participants = participants or _([])
         return $(readOnlyMarkup(participants.value()))  unless onchange
         markup = $(standingsMarkup(participants.value()))
         $submit = markup.find("input[type=submit]")
+
         keyUps = markup.find("input").asEventStream("keyup").map(evTarget).map(($el) ->
           value = $el.val()
           previous = $el.attr("data-prev")
@@ -91,6 +99,7 @@
           value: value
           valid: valid
         ).toProperty()
+
         keyUps.onValue (state) ->
           state.el.toggleClass "conflict", not state.valid
           if state.el.hasClass("add")
@@ -102,11 +111,11 @@
         isValid = keyUps.map((state) ->
           state.valid
         ).toProperty()
+
         markup.find("input.name").asEventStream("change").filter(isValid).map(".target").map($).onValue (el) ->
           renameStream.push
             from: el.attr("data-prev")
             to: el.val()
-
           el.attr "data-prev", el.val()
 
         markup.find("input.add").asEventStream("change").filter(isValid).map(".target").map($).map((el) ->
@@ -119,6 +128,7 @@
       rounds: $(roundsMarkup())
       unassigned: $(unassignedMarkup())
     )()
+
     Round = (->
       template = Handlebars.compile('<div data-roundId="{{round}}" class="round" style="width: {{width}}%"><header>Round {{round}}</header></div>')
       create: (moveStream, round, roundCount) ->
@@ -220,6 +230,7 @@
       participants: _([])
       matches: _([])
     )
+
     participantAdds = matchProp.sampledBy(participantStream, (propertyValue, streamValue) ->
       if propertyValue.participants.size() > 0
         newMatches = propertyValue.participants.map((it, i) ->
@@ -227,12 +238,12 @@
           a:
             name: it
             score: null
-
           b:
             name: streamValue
             score: null
         )
         propertyValue.matches = propertyValue.matches.union(newMatches.value())
+
       propertyValue.participants.push streamValue
       rounds = roundCount(propertyValue.participants.size())
       _(_.range($container.find(".round").length, rounds)).each (it) ->
@@ -240,6 +251,7 @@
 
       propertyValue
     )
+
     resultUpdates = matchProp.sampledBy(resultStream, (propertyValue, streamValue) ->
       propertyValue.matches = propertyValue.matches.map((it) ->
         if it.a.name is streamValue.a.name and it.b.name is streamValue.b.name
@@ -254,6 +266,7 @@
       )
       propertyValue
     )
+
     participantRenames = matchProp.sampledBy(renameStream, (propertyValue, streamValue) ->
       propertyValue.participants = propertyValue.participants.map((it) ->
         if it is streamValue.from
@@ -269,6 +282,7 @@
       )
       propertyValue
     )
+
     participantMoves = matchProp.sampledBy(moveStream, (propertyValue, streamValue) ->
       propertyValue.matches = propertyValue.matches.map((it) ->
         it.round = streamValue.round  if it.id is streamValue.match
@@ -276,7 +290,9 @@
       )
       propertyValue
     )
+
     result = Bacon.mergeAll([participantAdds, resultUpdates, participantRenames, participantMoves])
+
     result.throttle(10).onValue (state) ->
       console.log "New state created"
       console.log state
@@ -287,6 +303,7 @@
 
     $standings.replaceWith templates.standings(participantStream)
     unassigned = templates.unassigned.appendTo($container)
+
     participantRenames.merge(participantAdds).merge(resultUpdates).throttle(10).onValue (state) ->
       $matches = $container.find(".match")
       state.matches.each (it) ->
@@ -297,7 +314,6 @@
           $container.find("div.round").filter('[data-roundId="' + it.round + '"]').append Match.create(resultStream, it).markup
         else
           unassigned.append Match.create(resultStream, it).markup
-
 
     participants.each (it) ->
       participantStream.push it
