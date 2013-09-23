@@ -1,6 +1,8 @@
 .jqgroup.read-write
   .match
     cursor: move
+    &:hover
+      background-color: #CCC
   .round
     padding-bottom: 20px
   &:hover
@@ -34,7 +36,10 @@
     white-space: nowrap
     overflow: hidden
     table
+      border-spacing: 0
       width: 100%
+      td
+        padding: 0
       td:first-child
         position: relative
       &.add
@@ -42,6 +47,7 @@
     input[type=submit]
       width: 100%
     input[type=text]
+      padding: 0
       border: none
       width: 100%
       background: transparent
@@ -63,14 +69,13 @@
   .match
     min-width: 50px
     background-color: #BBB
-    border: 1px outset #666
-    margin: 2px
     text-align: center
     input[type=text], div
       display: inline-block
       font-size: 16px
       font-weight: bold
       width: 10%
+      padding: 0
       margin: 0 1%
       border: none
       border-radius: 2px
