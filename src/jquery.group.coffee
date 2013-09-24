@@ -140,16 +140,27 @@
           unless onchange
             return
 
-          r.asEventStream("dragover").doAction(".preventDefault").onValue((ev) -> )
-          r.asEventStream("dragenter").doAction(".preventDefault").map(evTarget).onValue ($el) ->
-            $el.addClass "over"
-            return
+          # Browser compatible hack for ignoring child objects' enter/leave
+          # events http://stackoverflow.com/a/10906204
+          eventCounter = 0
 
-          r.asEventStream("dragleave").doAction(".preventDefault").map(evTarget).onValue ($el) ->
-            $el.removeClass "over"
-            return
+          r.asEventStream("dragover").doAction(".preventDefault").onValue((ev) -> )
+          r.asEventStream("dragenter").doAction(".preventDefault").map(evTarget)
+            .onValue ($el) ->
+              if eventCounter == 0
+                $el.addClass "over"
+              eventCounter++
+              return
+
+          r.asEventStream("dragleave").doAction(".preventDefault").map(evTarget)
+            .onValue ($el) ->
+              eventCounter--
+              if eventCounter == 0
+                $el.removeClass "over"
+              return
 
           r.asEventStream("drop").doAction(".preventDefault").map(evElTarget).onValues (ev, $el) ->
+            eventCounter = 0
             id = ev.originalEvent.dataTransfer.getData("Text")
             obj = $container.find("[data-matchId=\"" + id + "\"]")
             $el.append obj
