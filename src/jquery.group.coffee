@@ -9,7 +9,7 @@
     (if isNaN(value) then null else value)
 
   evTarget = (ev) ->
-    $ ev.target
+    $ ev.currentTarget
 
   evElTarget = (ev) ->
     [ev, evTarget(ev)]
