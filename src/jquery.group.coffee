@@ -300,10 +300,11 @@
       $container.find(".standings").replaceWith templates.standings(participantStream, renameStream, makeStandings(state.participants, state.matches))
 
     $standings.replaceWith templates.standings(participantStream)
-    unassigned = templates.unassigned.appendTo($container)
 
     participantRenames.merge(participantAdds).merge(resultUpdates).throttle(10).onValue (state) ->
       $matches = $container.find(".match")
+      hasUnassigned = false
+      unassigned = null
       state.matches.each (it) ->
         $match = $matches.filter('[data-matchId="' + it.id + '"]')
         if $match.length
@@ -311,6 +312,8 @@
         else if it.round
           $container.find("div.round").filter('[data-roundId="' + it.round + '"]').append Match.create(resultStream, it).markup
         else
+          if unassigned == null
+            unassigned = templates.unassigned.appendTo($container)
           unassigned.append Match.create(resultStream, it).markup
 
     participants.each (it) ->
