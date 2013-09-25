@@ -129,9 +129,9 @@
 
     Round = (->
       template = Handlebars.compile('<div data-roundId="{{round}}" class="round" style="width: {{width}}%"><header>Round {{round}}</header></div>')
-      create: (moveStream, round, roundCount) ->
+      create: (moveStream, round) ->
         new ->
-          r = $(template( #(100 / roundCount)
+          r = $(template(
             round: round
             width: 100
           ))
@@ -190,7 +190,6 @@
         </div>')
       create: (resultStream, match) ->
         new ->
-          that = this
           match = $.extend({}, match)
           match.draggable = (onchange?).toString()
           unless onchange
@@ -198,9 +197,11 @@
             return
           markup = $(template(match))
           @markup = markup
-          keyUps = markup.find("input").asEventStream("keyup").map(evTarget).onValue(($el) ->
+
+          markup.find("input").asEventStream("keyup").map(evTarget).onValue(($el) ->
             $el.toggleClass "conflict", toIntOrNull($el.val()) is null
           )
+
           markup.find("input").asEventStream("change").onValue ->
             scoreA = toIntOrNull(markup.find("input.home").val())
             scoreB = toIntOrNull(markup.find("input.away").val())
@@ -256,7 +257,7 @@
       propertyValue.participants.push streamValue
       rounds = roundCount(propertyValue.participants.size())
       _(_.range($container.find(".round").length, rounds)).each (it) ->
-        $rounds.append Round.create(moveStream, it + 1, rounds).markup
+        $rounds.append Round.create(moveStream, it + 1).markup
 
       propertyValue
     )
@@ -314,7 +315,6 @@
 
     participantRenames.merge(participantAdds).merge(resultUpdates).throttle(10).onValue (state) ->
       $matches = $container.find(".match")
-      hasUnassigned = false
       unassigned = null
       state.matches.each (it) ->
         $match = $matches.filter('[data-matchId="' + it.id + '"]')
