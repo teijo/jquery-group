@@ -188,13 +188,16 @@
         <input type="text" class="away" value="{{b.score}}" />
         <span class="away">{{b.name}}</span>
         </div>')
+
       create: (resultStream, match) ->
         new ->
           match = $.extend({}, match)
           match.draggable = (onchange?).toString()
+
           unless onchange
             @markup = $(readOnlyTemplate(match))
             return
+
           markup = $(template(match))
           @markup = markup
 
@@ -205,12 +208,12 @@
           markup.find("input").asEventStream("change").onValue ->
             scoreA = toIntOrNull(markup.find("input.home").val())
             scoreB = toIntOrNull(markup.find("input.away").val())
-            return  if scoreA is null or scoreB is null
+            return if scoreA is null or scoreB is null
+
             update =
               a:
                 name: match.a.name
                 score: scoreA
-
               b:
                 name: match.b.name
                 score: scoreB
@@ -332,7 +335,6 @@
 
     pairs.each (it) ->
       resultStream.push it
-
 
   methods = init: (opts) ->
     opts = opts or {}
