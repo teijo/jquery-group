@@ -179,7 +179,7 @@
           r.asEventStream("drop").doAction(".preventDefault").map(evElTarget).onValues (ev, $el) ->
             eventCounter = 0
             id = ev.originalEvent.dataTransfer.getData("Text")
-            obj = $container.find("[data-matchId=\"" + id + "\"]")
+            obj = $container.find("[data-matchId='#{id}']")
             $el.append obj
             $el.removeClass "over"
             moveStream.push
@@ -290,7 +290,7 @@
       ###
       propertyValue.matches.filter((it) ->
         it.a.name == streamValue || it.b.name == streamValue
-      ).map((it) -> it.id).forEach (id) -> $container.find('[data-matchId="' + id + '"]').remove()
+      ).map((it) -> it.id).forEach (id) -> $container.find("[data-matchId='#{id}']").remove()
 
       propertyValue.participants = propertyValue.participants.filter (it) ->
         it != streamValue
@@ -356,12 +356,12 @@
       unassignedMatches = state.matches.filter(((it) -> !it.round))
 
       assignedMatches.each (it) ->
-        $match = $matches.filter('[data-matchId="' + it.id + '"]')
+        $match = $matches.filter("[data-matchId='#{it.id}']")
         markup = Match.create(resultStream, it).markup
         if $match.length
           $match.replaceWith markup
         else
-          $container.find("div.round").filter('[data-roundId="' + it.round + '"]').append markup
+          $container.find("div.round").filter("[data-roundId='#{it.round}']").append markup
 
       if unassignedMatches.size() > 0 || onchange
         $unassigned = $container.find('[data-roundId=0]')
@@ -390,5 +390,5 @@
     else if typeof method is "object" or not method
       methods.init.apply this, arguments
     else
-      $.error "Method " + method + " does not exist on jQuery.group"
+      $.error "Method #{method} does not exist on jQuery.group"
 ) jQuery
