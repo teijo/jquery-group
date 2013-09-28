@@ -320,17 +320,24 @@
 
     participantRenames.merge(participantAdds).merge(resultUpdates).throttle(10).onValue (state) ->
       $matches = $container.find(".match")
-      $unassigned = $container.find('[data-roundId=0]')
-      if $unassigned.length == 0
-        $unassigned = $(Round.create(moveStream, 0).markup).appendTo($container)
-      state.matches.each (it) ->
+
+      assignedMatches = state.matches.filter(((it) -> it.round))
+      unassignedMatches = state.matches.filter(((it) -> !it.round))
+
+      assignedMatches.each (it) ->
         $match = $matches.filter('[data-matchId="' + it.id + '"]')
         markup = Match.create(resultStream, it).markup
         if $match.length
           $match.replaceWith markup
-        else if it.round
-          $container.find("div.round").filter('[data-roundId="' + it.round + '"]').append markup
         else
+          $container.find("div.round").filter('[data-roundId="' + it.round + '"]').append markup
+
+      if unassignedMatches.size() > 0 || onchange
+        $unassigned = $container.find('[data-roundId=0]')
+        if $unassigned.length == 0
+          $unassigned = $(Round.create(moveStream, 0).markup).appendTo($container)
+        unassignedMatches.each (it) ->
+          markup = Match.create(resultStream, it).markup
           $unassigned.append(markup)
 
     participants.each (it) ->
