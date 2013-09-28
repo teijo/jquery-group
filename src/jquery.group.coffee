@@ -47,6 +47,14 @@
 
   numberRe = new RegExp(/^[0-9]+$/)
 
+
+  # If attached to backend, this function could be overridden and return newly
+  # allocated identifier via Ajax query. For standalone purposes, we can just
+  # increment the integer.
+  localCounter = 0
+  generateNewMatchId = () ->
+    ++localCounter
+
   group = ($container, participants, pairs, onchange) ->
     $container.addClass "read-write"  if onchange
     templates = (->
@@ -71,17 +79,17 @@
         <col style="width: 60%">
         <col span="4" style="width: 10%">
         </colgroup>
-        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th></tr>
+        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>Drop?</th></tr>
         {{#each this}}
-        <tr><td><input class="name" type="text" data-prev="{{name}}" value="{{name}}" /></td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>
+        <tr><td><input class="name" type="text" data-prev="{{name}}" value="{{name}}" /></td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td><td class="drop" data-name="{{name}}">Drop</td></tr>
         {{/each}}
-        <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="4"><input type="submit" value="Add" disabled="disabled" /></td></tr>
+        <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="5"><input type="submit" value="Add" disabled="disabled" /></td></tr>
         </table>
         </div>')
 
       roundsMarkup = Handlebars.compile('<div class="rounds"></div>')
 
-      standings: (participantStream, renameStream, participants) ->
+      standings: (participantStream, renameStream, removeStream, participants) ->
         participants = participants or _([])
         return $(readOnlyMarkup(participants.value()))  unless onchange
         markup = $(standingsMarkup(participants.value()))
@@ -118,6 +126,11 @@
           el.val()
         ).onValue (value) ->
           participantStream.push value
+
+        markup.find("td.drop").asEventStream("click").map(".target").map($).map((el) ->
+          el.attr("data-name")
+        ).onValue (value) ->
+          removeStream.push value
 
         markup
 
@@ -243,6 +256,7 @@
     renameStream = new Bacon.Bus()
     resultStream = new Bacon.Bus()
     moveStream = new Bacon.Bus()
+    removeStream = new Bacon.Bus()
     matchProp = matchStream.toProperty(
       participants: _([])
       matches: _([])
@@ -251,7 +265,7 @@
     participantAdds = matchProp.sampledBy(participantStream, (propertyValue, streamValue) ->
       if propertyValue.participants.size() > 0
         newMatches = propertyValue.participants.map((it, i) ->
-          id: (propertyValue.matches.size() + i)
+          id: generateNewMatchId()
           a:
             name: it
             score: null
@@ -266,6 +280,23 @@
       _(_.range($rounds.find(".round").length, rounds)).each (it) ->
         $rounds.append Round.create(moveStream, it + 1).markup
 
+      propertyValue
+    )
+
+    participantRemoves = matchProp.sampledBy(removeStream, (propertyValue, streamValue) ->
+      ###propertyValue.participants.push streamValue
+      rounds = roundCount(propertyValue.participants.size())
+      _(_.range($rounds.find(".round").length, rounds)).each (it) ->
+        $rounds.append Round.create(moveStream, it + 1).markup
+      ###
+      propertyValue.matches.filter((it) ->
+        it.a.name == streamValue || it.b.name == streamValue
+      ).map((it) -> it.id).forEach (id) -> $container.find('[data-matchId="' + id + '"]').remove()
+
+      propertyValue.participants = propertyValue.participants.filter (it) ->
+        it != streamValue
+      propertyValue.matches = propertyValue.matches.filter (it) ->
+        it.a.name != streamValue && it.b.name != streamValue
       propertyValue
     )
 
@@ -308,13 +339,14 @@
       propertyValue
     )
 
-    result = Bacon.mergeAll([participantAdds, resultUpdates, participantRenames, participantMoves])
+    result = Bacon.mergeAll([participantAdds, resultUpdates, participantRenames, participantRemoves, participantMoves])
 
     result.throttle(10).onValue (state) ->
       onchange state.matches.value()  if onchange
 
-    participantAdds.merge(resultUpdates).throttle(10).onValue (state) ->
-      $container.find(".standings").replaceWith templates.standings(participantStream, renameStream, makeStandings(state.participants, state.matches))
+    participantAdds.merge(resultUpdates).merge(participantRemoves).throttle(10).onValue (state) ->
+      $container.find(".standings").replaceWith templates.standings(participantStream,
+        renameStream, removeStream, makeStandings(state.participants, state.matches), null)
 
     $standings.replaceWith templates.standings(participantStream)
 
