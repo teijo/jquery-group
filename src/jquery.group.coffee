@@ -91,7 +91,6 @@
           value = $el.val()
           previous = $el.attr("data-prev")
           valid = value.length > 0 and (not participants.pluck("name").contains(value) or previous is value)
-          console.log valid
           el: $el
           value: value
           valid: valid
@@ -305,8 +304,6 @@
     result = Bacon.mergeAll([participantAdds, resultUpdates, participantRenames, participantMoves])
 
     result.throttle(10).onValue (state) ->
-      console.log "New state created"
-      console.log state
       onchange state.matches.value()  if onchange
 
     participantAdds.merge(resultUpdates).throttle(10).onValue (state) ->
