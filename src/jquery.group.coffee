@@ -80,7 +80,6 @@
         </div>')
 
       roundsMarkup = Handlebars.compile('<div class="rounds"></div>')
-      unassignedMarkup = Handlebars.compile('<div class="unassigned"><header>Unassigned</header></div>')
 
       standings: (participantStream, renameStream, participants) ->
         participants = participants or _([])
@@ -124,7 +123,6 @@
         markup
 
       rounds: $(roundsMarkup())
-      unassigned: $(unassignedMarkup())
     )()
 
     Round = (->
@@ -227,7 +225,7 @@
 
           markup.asEventStream("dragend").map(".originalEvent").map(evElTarget).onValues (ev, $el) ->
             $el.css "opacity", 1.0
-            $container.find(".round").removeClass "droppable"
+            $container.find(".droppable").removeClass "droppable"
 
           return
     )()
@@ -259,7 +257,7 @@
 
       propertyValue.participants.push streamValue
       rounds = roundCount(propertyValue.participants.size())
-      _(_.range($container.find(".round").length, rounds)).each (it) ->
+      _(_.range($rounds.find(".round").length, rounds)).each (it) ->
         $rounds.append Round.create(moveStream, it + 1).markup
 
       propertyValue
@@ -318,17 +316,18 @@
 
     participantRenames.merge(participantAdds).merge(resultUpdates).throttle(10).onValue (state) ->
       $matches = $container.find(".match")
-      unassigned = null
+      $unassigned = $container.find('[data-roundId=0]')
+      if $unassigned.length == 0
+        $unassigned = $(Round.create(moveStream, 0).markup).appendTo($container)
       state.matches.each (it) ->
         $match = $matches.filter('[data-matchId="' + it.id + '"]')
+        markup = Match.create(resultStream, it).markup
         if $match.length
-          $match.replaceWith Match.create(resultStream, it).markup
+          $match.replaceWith markup
         else if it.round
-          $container.find("div.round").filter('[data-roundId="' + it.round + '"]').append Match.create(resultStream, it).markup
+          $container.find("div.round").filter('[data-roundId="' + it.round + '"]').append markup
         else
-          if unassigned == null
-            unassigned = templates.unassigned.appendTo($container)
-          unassigned.append Match.create(resultStream, it).markup
+          $unassigned.append(markup)
 
     participants.each (it) ->
       participantStream.push it
