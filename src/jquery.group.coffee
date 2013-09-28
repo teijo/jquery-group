@@ -190,7 +190,6 @@
     )()
 
     Match = (->
-      id = 0
       readOnlyTemplate = Handlebars.compile('
         <div data-matchId="{{id}}" class="match" draggable="{{draggable}}">
         <span class="home">{{a.name}}</span>
