@@ -125,7 +125,14 @@
     )()
 
     Round = (->
-      template = Handlebars.compile('<div data-roundId="{{round}}" class="round" style="width: {{width}}%"><header>Round {{round}}</header></div>')
+      template = Handlebars.compile('
+        <div data-roundId="{{round}}" class="round" style="width: {{width}}%">
+        {{#if round}}
+          <header>Round {{round}}</header>
+        {{else}}
+          <header>Unassigned</header>
+        {{/if}}
+        </div>')
       create: (moveStream, round) ->
         new ->
           r = $(template(
