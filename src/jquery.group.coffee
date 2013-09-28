@@ -57,7 +57,7 @@
         <col style="width: 60%">
         <col span="4" style="width: 10%">
         </colgroup>
-        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</tr>
+        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th></tr>
         {{#each this}}
         <tr><td>{{name}}</td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>
         {{/each}}
@@ -71,7 +71,7 @@
         <col style="width: 60%">
         <col span="4" style="width: 10%">
         </colgroup>
-        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</tr>
+        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th></tr>
         {{#each this}}
         <tr><td><input class="name" type="text" data-prev="{{name}}" value="{{name}}" /></td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>
         {{/each}}
