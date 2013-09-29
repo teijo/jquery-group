@@ -315,11 +315,13 @@
     resultUpdates = matchProp.sampledBy(resultStream, (propertyValue, streamValue) ->
       propertyValue.matches = propertyValue.matches.map((it) ->
         if it.a.name is streamValue.a.name and it.b.name is streamValue.b.name
-          it.round = streamValue.round
+          if streamValue.round != undefined
+            it.round = streamValue.round
           it.a.score = streamValue.a.score
           it.b.score = streamValue.b.score
         else if it.a.name is streamValue.b.name and it.b.name is streamValue.a.name
-          it.round = streamValue.round
+          if streamValue.round != undefined
+            it.round = streamValue.round
           it.a.score = streamValue.b.score
           it.b.score = streamValue.a.score
         it
