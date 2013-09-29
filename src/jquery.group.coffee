@@ -304,8 +304,10 @@
 
       $unassigned = $container.find("[data-roundid='0']")
       _(_.range(roundsAfter + 1, roundsBefore + 1)).each (id) ->
-        $moved = $rounds.find("[data-roundid='#{id}']").find('.match')
+        $roundToBeDeleted = $rounds.find("[data-roundid='#{id}']")
+        $moved = $roundToBeDeleted.find('.match')
         $unassigned.append $moved
+        $roundToBeDeleted.remove()
 
       propertyValue
     )
