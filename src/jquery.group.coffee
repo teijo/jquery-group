@@ -283,19 +283,30 @@
     )
 
     participantRemoves = matchProp.sampledBy(removeStream, (propertyValue, streamValue) ->
-      ###propertyValue.participants.push streamValue
-      rounds = roundCount(propertyValue.participants.size())
-      _(_.range($rounds.find(".round").length, rounds)).each (it) ->
-        $rounds.append Round.create(moveStream, it + 1).markup
-      ###
       propertyValue.matches.filter((it) ->
         it.a.name == streamValue || it.b.name == streamValue
       ).map((it) -> it.id).forEach (id) -> $container.find("[data-matchId='#{id}']").remove()
 
+      roundsBefore = roundCount(propertyValue.participants.size())
+
       propertyValue.participants = propertyValue.participants.filter (it) ->
         it != streamValue
-      propertyValue.matches = propertyValue.matches.filter (it) ->
+
+      roundsAfter = roundCount(propertyValue.participants.size())
+
+      propertyValue.matches = propertyValue.matches.filter((it) ->
         it.a.name != streamValue && it.b.name != streamValue
+      ).map((it) ->
+        if it.round > roundsAfter
+          it.round = 0
+        it
+      )
+
+      $unassigned = $container.find("[data-roundid='0']")
+      _(_.range(roundsAfter + 1, roundsBefore + 1)).each (id) ->
+        $moved = $rounds.find("[data-roundid='#{id}']").find('.match')
+        $unassigned.append $moved
+
       propertyValue
     )
 
