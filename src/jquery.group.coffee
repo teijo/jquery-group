@@ -380,7 +380,7 @@
         $unassigned = $container.find('[data-roundId=0]')
         if $unassigned.length == 0
           $unassigned = $(Round.create(moveStream, 0).markup).appendTo($container)
-        unassignedMatches.each (it) ->
+        unassignedMatches.filter((it) -> $("[data-matchId='#{it.id}']").length == 0).each (it) ->
           markup = Match.create(resultStream, it).markup
           $unassigned.append(markup)
 
