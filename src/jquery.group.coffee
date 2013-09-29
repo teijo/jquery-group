@@ -28,6 +28,12 @@
           ownScore: match.b.score
           opponentScore: match.a.score
       )
+      roundWins = matches.reduce(((acc, match) ->
+        acc + match.ownScore
+      ), 0)
+      roundLosses = matches.reduce(((acc, match) ->
+        acc + match.opponentScore
+      ), 0)
       wins = matches.filter((match) ->
         match.ownScore > match.opponentScore
       ).size()
@@ -42,6 +48,8 @@
       losses: losses
       ties: ties
       points: wins * 3 + ties
+      roundWins: roundWins
+      roundLosses: roundLosses
     ).sortBy (it) ->
       -it.points
 
@@ -58,16 +66,23 @@
   group = ($container, participants, pairs, onchange) ->
     $container.addClass "read-write"  if onchange
     templates = (->
+      templateScoreColumns = '
+        <td>{{wins}}</td>
+        <td>{{losses}}</td>
+        <td>{{ties}}</td>
+        <td>{{points}}</td>
+        <td>{{roundWins}} / {{roundLosses}}</td>'
+
       readOnlyMarkup = Handlebars.compile('
         <div class="standings">
         <table>
         <colgroup>
-        <col style="width: 60%">
+        <col style="width: 50%">
         <col span="4" style="width: 10%">
         </colgroup>
-        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th></tr>
+        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th></tr>
         {{#each this}}
-        <tr><td>{{name}}</td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td></tr>
+          <tr><td>{{name}}</td>'+templateScoreColumns+'</tr>
         {{/each}}
         </table>
         </div>')
@@ -76,14 +91,14 @@
         <div class="standings">
         <table>
         <colgroup>
-        <col style="width: 60%">
+        <col style="width: 50%">
         <col span="4" style="width: 10%">
         </colgroup>
-        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>Drop?</th></tr>
+        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th><th>Drop?</th></tr>
         {{#each this}}
-        <tr><td><input class="name" type="text" data-prev="{{name}}" value="{{name}}" /></td><td>{{wins}}</td><td>{{losses}}</td><td>{{ties}}</td><td>{{points}}</td><td class="drop" data-name="{{name}}">Drop</td></tr>
+        <tr><td><input class="name" type="text" data-prev="{{name}}" value="{{name}}" /></td>'+templateScoreColumns+'<td class="drop" data-name="{{name}}">Drop</td></tr>
         {{/each}}
-        <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="5"><input type="submit" value="Add" disabled="disabled" /></td></tr>
+        <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
         </table>
         </div>')
 
