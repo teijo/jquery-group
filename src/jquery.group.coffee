@@ -50,6 +50,9 @@
       points: wins * 3 + ties
       roundWins: roundWins
       roundLosses: roundLosses
+      ratio: roundWins - roundLosses
+    ).sortBy((it) ->
+      -it.ratio
     ).sortBy (it) ->
       -it.points
 
@@ -71,14 +74,14 @@
         <td>{{losses}}</td>
         <td>{{ties}}</td>
         <td>{{points}}</td>
-        <td>{{roundWins}} / {{roundLosses}}</td>'
+        <td>{{ratio}}</td>'
 
       readOnlyMarkup = Handlebars.compile('
         <div class="standings">
         <table>
         <colgroup>
         <col style="width: 50%">
-        <col span="4" style="width: 10%">
+        <col span="5" style="width: 10%">
         </colgroup>
         <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th></tr>
         {{#each this}}
@@ -91,8 +94,8 @@
         <div class="standings">
         <table>
         <colgroup>
-        <col style="width: 50%">
-        <col span="4" style="width: 10%">
+        <col style="width: 40%">
+        <col span="6" style="width: 10%">
         </colgroup>
         <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th><th>Drop?</th></tr>
         {{#each this}}
