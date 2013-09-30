@@ -74,7 +74,7 @@
         <td>{{losses}}</td>
         <td>{{ties}}</td>
         <td>{{points}}</td>
-        <td>{{ratio}}</td>'
+        <td title="Won {{roundWins}}, lost {{roundLosses}} bouts">{{ratio}}</td>'
 
       readOnlyMarkup = Handlebars.compile('
         <div class="standings">
