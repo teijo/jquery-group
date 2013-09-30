@@ -288,7 +288,7 @@
 
     participantAdds = matchProp.sampledBy(participantStream, (propertyValue, streamValue) ->
       if propertyValue.participants.size() > 0
-        newMatches = propertyValue.participants.map((it, i) ->
+        newMatches = propertyValue.participants.map((it) ->
           id: generateNewMatchId()
           a:
             name: it
@@ -390,8 +390,6 @@
     $standings.replaceWith templates.standings(participantStream)
 
     participantRenames.merge(participantAdds).merge(resultUpdates).throttle(10).onValue (state) ->
-      $matches = $container.find(".match")
-
       assignedMatches = state.matches.filter(((it) -> it.round))
       unassignedMatches = state.matches.filter(((it) -> !it.round))
 
