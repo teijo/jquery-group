@@ -14,6 +14,9 @@
   evElTarget = (ev) ->
     [ev, evTarget(ev)]
 
+  unwrap = (state) ->
+    matches: state.matches.value()
+
   makeStandings = (participants, pairs) ->
     participants.map((it) ->
       matches = pairs.filter((match) ->
@@ -381,7 +384,7 @@
     result = Bacon.mergeAll([participantAdds, resultUpdates, participantRenames, participantRemoves, participantMoves])
 
     result.throttle(10).onValue (state) ->
-      onchange state.matches.value()  if onchange
+      onchange(unwrap(state)) if onchange
 
     participantAdds.merge(resultUpdates).merge(participantRemoves).throttle(10).onValue (state) ->
       $container.find(".standings").replaceWith templates.standings(participantStream,
@@ -418,7 +421,7 @@
   methods = init: (opts) ->
     opts = opts or {}
     container = this
-    pairs = _(opts.init)
+    pairs = _(opts.init?.matches)
     participants = pairs.pluck("a").union(pairs.pluck("b").value()).pluck("name").unique()
     new group($('<div class="jqgroup"></div>').appendTo(container), participants, pairs, opts.save or null)
 
