@@ -14,6 +14,12 @@
   evElTarget = (ev) ->
     [ev, evTarget(ev)]
 
+  roundById = (id) ->
+    "[data-roundid='#{id}']"
+
+  matchById = (id) ->
+    "[data-matchid='#{id}']"
+
   makeStandings = (participants, pairs) ->
     participants.map((it) ->
       matches = pairs.filter((match) ->
@@ -157,7 +163,7 @@
 
     Round = (->
       template = Handlebars.compile('
-        <div data-roundId="{{round}}" class="round" style="width: {{width}}%">
+        <div data-roundid="{{round}}" class="round" style="width: {{width}}%">
         {{#if round}}
           <header>Round {{round}}</header>
         {{else}}
@@ -197,7 +203,7 @@
           r.asEventStream("drop").doAction(".preventDefault").map(evElTarget).onValues (ev, $el) ->
             eventCounter = 0
             id = ev.originalEvent.dataTransfer.getData("Text")
-            obj = $container.find("[data-matchId='#{id}']")
+            obj = $container.find(matchById(id))
             $el.append obj
             $el.removeClass "over"
             moveStream.push
@@ -209,14 +215,14 @@
 
     Match = (->
       readOnlyTemplate = Handlebars.compile('
-        <div data-matchId="{{id}}" class="match" draggable="{{draggable}}">
+        <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
         <span class="home">{{a.name}}</span>
         <div class="home">{{a.score}}</div>
         <div class="away">{{b.score}}</div>
         <span class="away">{{b.name}}</span>
         </div>')
       template = Handlebars.compile('
-        <div data-matchId="{{id}}" class="match" draggable="{{draggable}}">
+        <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
         <span class="home">{{a.name}}</span>
         <input type="text" class="home" value="{{a.score}}" />
         <input type="text" class="away" value="{{b.score}}" />
@@ -303,7 +309,7 @@
     participantRemoves = matchProp.sampledBy(removeStream, (propertyValue, streamValue) ->
       propertyValue.matches.filter((it) ->
         it.a.name == streamValue || it.b.name == streamValue
-      ).map((it) -> it.id).forEach (id) -> $container.find("[data-matchId='#{id}']").remove()
+      ).map((it) -> it.id).forEach (id) -> $container.find(matchById(id)).remove()
 
       roundsBefore = roundCount(propertyValue.participants.size())
 
@@ -320,9 +326,9 @@
         it
       )
 
-      $unassigned = $container.find("[data-roundid='0']")
+      $unassigned = $container.find(roundById(0))
       _(_.range(roundsAfter + 1, roundsBefore + 1)).each (id) ->
-        $roundToBeDeleted = $rounds.find("[data-roundid='#{id}']")
+        $roundToBeDeleted = $rounds.find(roundById(id))
         $moved = $roundToBeDeleted.find('.match')
         $unassigned.append $moved
         $roundToBeDeleted.remove()
@@ -389,18 +395,18 @@
       unassignedMatches = state.matches.filter(((it) -> !it.round))
 
       assignedMatches.each (it) ->
-        $match = $matches.filter("[data-matchId='#{it.id}']")
+        $match = $matches.filter(matchById(it.id))
         markup = Match.create(resultStream, it).markup
         if $match.length
           $match.replaceWith markup
         else
-          $container.find("div.round").filter("[data-roundId='#{it.round}']").append markup
+          $container.find("div.round").filter(roundById(it.round)).append markup
 
       if unassignedMatches.size() > 0 || onchange
-        $unassigned = $container.find('[data-roundId=0]')
+        $unassigned = $container.find(roundById(0))
         if $unassigned.length == 0
           $unassigned = $(Round.create(moveStream, 0).markup).appendTo($container)
-        unassignedMatches.filter((it) -> $("[data-matchId='#{it.id}']").length == 0).each (it) ->
+        unassignedMatches.filter((it) -> $container.find(matchById(it.id)).length == 0).each (it) ->
           markup = Match.create(resultStream, it).markup
           $unassigned.append(markup)
 
