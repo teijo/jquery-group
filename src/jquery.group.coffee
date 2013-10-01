@@ -79,14 +79,14 @@
 
     $container.addClass "read-write"  if onchange
     templates = (->
-      templateScoreColumns = '
+      standingsScoreColumnMarkup = '
         <td>{{wins}}</td>
         <td>{{losses}}</td>
         <td>{{ties}}</td>
         <td>{{points}}</td>
         <td title="Won {{roundWins}}, lost {{roundLosses}} bouts">{{ratio}}</td>'
 
-      readOnlyMarkup = Handlebars.compile('
+      standingsViewTemplate = Handlebars.compile('
         <div class="standings">
         <table>
         <colgroup>
@@ -95,12 +95,12 @@
         </colgroup>
         <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th></tr>
         {{#each this}}
-          <tr><td>{{name}}</td>'+templateScoreColumns+'</tr>
+          <tr><td>{{name}}</td>'+standingsScoreColumnMarkup+'</tr>
         {{/each}}
         </table>
         </div>')
 
-      standingsMarkup = Handlebars.compile('
+      standingsEditTemplate = Handlebars.compile('
         <div class="standings">
         <table>
         <colgroup>
@@ -109,18 +109,43 @@
         </colgroup>
         <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th><th>Drop?</th></tr>
         {{#each this}}
-        <tr><td><input class="name" type="text" data-prev="{{name}}" value="{{name}}" /></td>'+templateScoreColumns+'<td class="drop" data-name="{{name}}">Drop</td></tr>
+        <tr><td><input class="name" type="text" data-prev="{{name}}" value="{{name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{name}}">Drop</td></tr>
         {{/each}}
         <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
         </table>
+        </div>')
+
+      roundTemplate = Handlebars.compile('
+        <div data-roundid="{{round}}" class="round" style="width: {{width}}%">
+        {{#if round}}
+          <header>Round {{round}}</header>
+        {{else}}
+          <header>Unassigned</header>
+        {{/if}}
+        </div>')
+
+      matchViewTemplate = Handlebars.compile('
+        <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
+        <span class="home">{{a.name}}</span>
+        <div class="home">{{a.score}}</div>
+        <div class="away">{{b.score}}</div>
+        <span class="away">{{b.name}}</span>
+        </div>')
+
+      matchEditTemplate = Handlebars.compile('
+        <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
+        <span class="home">{{a.name}}</span>
+        <input type="text" class="home" value="{{a.score}}" />
+        <input type="text" class="away" value="{{b.score}}" />
+        <span class="away">{{b.name}}</span>
         </div>')
 
       roundsMarkup = Handlebars.compile('<div class="rounds"></div>')
 
       standings: (participantStream, renameStream, removeStream, participants) ->
         participants = participants or _([])
-        return $(readOnlyMarkup(participants.value()))  unless onchange
-        markup = $(standingsMarkup(participants.value()))
+        return $(standingsViewTemplate(participants.value()))  unless onchange
+        markup = $(standingsEditTemplate(participants.value()))
         $submit = markup.find("input[type=submit]")
 
         keyUps = markup.find("input").asEventStream("keyup").map(evTarget).map(($el) ->
@@ -163,23 +188,18 @@
         markup
 
       rounds: $(roundsMarkup())
+      round: (round) -> $(roundTemplate(round))
+      matchEdit: (match) -> $(matchEditTemplate(match))
+      matchView: (match) -> $(matchViewTemplate(match))
     )()
 
     Round = (->
-      template = Handlebars.compile('
-        <div data-roundid="{{round}}" class="round" style="width: {{width}}%">
-        {{#if round}}
-          <header>Round {{round}}</header>
-        {{else}}
-          <header>Unassigned</header>
-        {{/if}}
-        </div>')
       create: (moveStream, round) ->
         new ->
-          r = $(template(
+          r = templates.round(
             round: round
             width: 100
-          ))
+          )
           @markup = r
 
           unless onchange
@@ -218,31 +238,16 @@
     )()
 
     Match = (->
-      readOnlyTemplate = Handlebars.compile('
-        <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-        <span class="home">{{a.name}}</span>
-        <div class="home">{{a.score}}</div>
-        <div class="away">{{b.score}}</div>
-        <span class="away">{{b.name}}</span>
-        </div>')
-      template = Handlebars.compile('
-        <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-        <span class="home">{{a.name}}</span>
-        <input type="text" class="home" value="{{a.score}}" />
-        <input type="text" class="away" value="{{b.score}}" />
-        <span class="away">{{b.name}}</span>
-        </div>')
-
       create: (resultStream, match) ->
         new ->
           match = $.extend({}, match)
           match.draggable = (onchange?).toString()
 
           unless onchange
-            @markup = $(readOnlyTemplate(match))
+            @markup = templates.matchView(match)
             return
 
-          markup = $(template(match))
+          markup = templates.matchEdit(match)
           @markup = markup
 
           markup.find("input").asEventStream("keyup").map(evTarget).onValue(($el) ->
