@@ -116,9 +116,9 @@
         </div>')
 
       roundTemplate = Handlebars.compile('
-        <div data-roundid="{{round}}" class="round" style="width: {{width}}%">
-        {{#if round}}
-          <header>Round {{round}}</header>
+        <div data-roundid="{{this}}" class="round">
+        {{#if this}}
+          <header>Round {{this}}</header>
         {{else}}
           <header>Unassigned</header>
         {{/if}}
@@ -188,7 +188,7 @@
         markup
 
       rounds: $(roundsMarkup())
-      round: (round) -> $(roundTemplate(round))
+      round: (roundNumber) -> $(roundTemplate(roundNumber))
       matchEdit: (match) -> $(matchEditTemplate(match))
       matchView: (match) -> $(matchViewTemplate(match))
     )()
@@ -196,10 +196,7 @@
     Round = (->
       create: (moveStream, round) ->
         new ->
-          r = templates.round(
-            round: round
-            width: 100
-          )
+          r = templates.round(round)
           @markup = r
 
           unless onchange
