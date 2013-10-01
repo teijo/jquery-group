@@ -140,7 +140,7 @@
         <span class="away">{{b.name}}</span>
         </div>')
 
-      roundsMarkup = Handlebars.compile('<div class="rounds"></div>')
+      roundsTemplate = Handlebars.compile('<div class="rounds"></div>')
 
       standings: (participantStream, renameStream, removeStream, participants) ->
         participants = participants or _([])
@@ -187,7 +187,7 @@
 
         markup
 
-      rounds: $(roundsMarkup())
+      rounds: $(roundsTemplate())
       round: (roundNumber) -> $(roundTemplate(roundNumber))
       matchEdit: (match) -> $(matchEditTemplate(match))
       matchView: (match) -> $(matchViewTemplate(match))
