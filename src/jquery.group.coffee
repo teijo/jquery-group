@@ -22,10 +22,10 @@
     matches: state.matches.map((match) ->
       # Create all new object, mutating match breaks internal state
       a:
-        name: teamPositionFromMatch(state.participants, match.a.name)
+        team: teamPositionFromMatch(state.participants, match.a.team)
         score: match.a.score
       b:
-        name: teamPositionFromMatch(state.participants, match.b.name)
+        team: teamPositionFromMatch(state.participants, match.b.team)
         score: match.b.score
       round: match.round
     ).value()
@@ -35,9 +35,9 @@
       matches = pairs.filter((match) ->
         match.a.score isnt null and match.b.score isnt null
       ).filter((match) ->
-        match.a.name is it or match.b.name is it
+        match.a.team is it or match.b.team is it
       ).map((match) ->
-        if match.a.name is it
+        if match.a.team is it
           ownScore: match.a.score
           opponentScore: match.b.score
         else
@@ -59,7 +59,7 @@
       ties = matches.filter((match) ->
         match.ownScore is match.opponentScore
       ).size()
-      name: it
+      team: it
       wins: wins
       losses: losses
       ties: ties
@@ -112,7 +112,7 @@
         </colgroup>
         <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th></tr>
         {{#each this}}
-          <tr><td>{{name.name}}</td>'+standingsScoreColumnMarkup+'</tr>
+          <tr><td>{{team.name}}</td>'+standingsScoreColumnMarkup+'</tr>
         {{/each}}
         </table>
         </div>')
@@ -126,7 +126,7 @@
         </colgroup>
         <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th><th>Drop?</th></tr>
         {{#each this}}
-        <tr><td><input class="name" type="text" data-prev="{{name.name}}" value="{{name.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{name.id}}">Drop</td></tr>
+        <tr><td><input class="name" type="text" data-prev="{{team.name}}" value="{{team.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{team.id}}">Drop</td></tr>
         {{/each}}
         <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
         </table>
@@ -143,18 +143,18 @@
 
       matchViewTemplate = Handlebars.compile('
         <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-        <span class="home">{{a.name.name}}</span>
+        <span class="home">{{a.team.name}}</span>
         <div class="home">{{a.score}}</div>
         <div class="away">{{b.score}}</div>
-        <span class="away">{{b.name.name}}</span>
+        <span class="away">{{b.team.name}}</span>
         </div>')
 
       matchEditTemplate = Handlebars.compile('
         <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-        <span class="home">{{a.name.name}}</span>
+        <span class="home">{{a.team.name}}</span>
         <input type="text" class="home" value="{{a.score}}" />
         <input type="text" class="away" value="{{b.score}}" />
-        <span class="away">{{b.name.name}}</span>
+        <span class="away">{{b.team.name}}</span>
         </div>')
 
       roundsTemplate = Handlebars.compile('<div class="rounds"></div>')
@@ -277,10 +277,10 @@
 
             update =
               a:
-                name: match.a.name
+                team: match.a.team
                 score: scoreA
               b:
-                name: match.b.name
+                team: match.b.team
                 score: scoreB
 
             resultStream.push update
@@ -315,10 +315,10 @@
         newMatches = propertyValue.participants.map((it) ->
           id: generateNewMatchId()
           a:
-            name: it
+            team: it
             score: null
           b:
-            name: streamValue
+            team: streamValue
             score: null
         )
         propertyValue.matches = propertyValue.matches.union(newMatches.value())
@@ -333,7 +333,7 @@
 
     participantRemoves = matchProp.sampledBy(removeStream, (propertyValue, streamValue) ->
       propertyValue.matches.filter((it) ->
-        it.a.name.id == streamValue || it.b.name.id == streamValue
+        it.a.team.id == streamValue || it.b.team.id == streamValue
       ).map((it) -> it.id).forEach (id) -> matchById(id).remove()
 
       roundsBefore = roundCount(propertyValue.participants.size())
@@ -344,7 +344,7 @@
       roundsAfter = roundCount(propertyValue.participants.size())
 
       propertyValue.matches = propertyValue.matches.filter((it) ->
-        it.a.name.id != streamValue && it.b.name.id != streamValue
+        it.a.team.id != streamValue && it.b.team.id != streamValue
       ).map((it) ->
         if it.round > roundsAfter
           it.round = 0
@@ -363,12 +363,12 @@
 
     resultUpdates = matchProp.sampledBy(resultStream, (propertyValue, streamValue) ->
       propertyValue.matches = propertyValue.matches.map((it) ->
-        if it.a.name.id is streamValue.a.name.id and it.b.name.id is streamValue.b.name.id
+        if it.a.team.id is streamValue.a.team.id and it.b.team.id is streamValue.b.team.id
           if streamValue.round != undefined
             it.round = streamValue.round
           it.a.score = streamValue.a.score
           it.b.score = streamValue.b.score
-        else if it.a.name.id is streamValue.b.name.id and it.b.name.id is streamValue.a.name.id
+        else if it.a.team.id is streamValue.b.team.id and it.b.team.id is streamValue.a.team.id
           if streamValue.round != undefined
             it.round = streamValue.round
           it.a.score = streamValue.b.score
@@ -385,9 +385,9 @@
         it
       )
       propertyValue.matches = propertyValue.matches.map((it) ->
-        if it.a.name.name is streamValue.from
-          it.a.name.name = streamValue.to
-        else it.b.name.name = streamValue.to  if it.b.name.name is streamValue.from
+        if it.a.team.name is streamValue.from
+          it.a.team.name = streamValue.to
+        else it.b.team.name = streamValue.to  if it.b.team.name is streamValue.from
         it
       )
       propertyValue
@@ -443,8 +443,8 @@
     container = this
     participants = _(opts.init.teams) #pairs.pluck("a").union(pairs.pluck("b").value()).pluck("name").unique()
     pairs = _(opts.init.matches).map (it) ->
-      it.a.name = opts.init.teams[it.a.name]
-      it.b.name = opts.init.teams[it.b.name]
+      it.a.team = opts.init.teams[it.a.team]
+      it.b.team = opts.init.teams[it.b.team]
       it
     group($('<div class="jqgroup"></div>').appendTo(container), participants, pairs, opts.save or null)
 
