@@ -27,6 +27,7 @@
       b:
         name: teamPositionFromMatch(state.participants, match.b.name)
         score: match.b.score
+      round: match.round
     ).value()
 
   makeStandings = (participants, pairs) ->
