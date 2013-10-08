@@ -74,12 +74,16 @@
   numberRe = new RegExp(/^[0-9]+$/)
 
 
-  # If attached to backend, this function could be overridden and return newly
+  # If attached to backend, these functions could be overridden and return newly
   # allocated identifier via Ajax query. For standalone purposes, we can just
   # increment the integer.
-  localCounter = 0
+  localMatchCounter = 0
   generateNewMatchId = () ->
-    ++localCounter
+    ++localMatchCounter
+
+  localTeamCounter = 0
+  generateNewTeamId = () ->
+    ++localTeamCounter
 
   group = ($container, participants, pairs, onchange) ->
 
@@ -190,7 +194,9 @@
         markup.find("input.add").asEventStream("change").filter(isValid).map(".target").map($).map((el) ->
           el.val()
         ).onValue (value) ->
-          participantStream.push value
+          participantStream.push
+            id: generateNewTeamId()
+            name: value
 
         markup.find("td.drop").asEventStream("click").map(".target").map($).map((el) ->
           el.attr("data-name")
