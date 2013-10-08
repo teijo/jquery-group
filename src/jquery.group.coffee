@@ -14,8 +14,21 @@
   evElTarget = (ev) ->
     [ev, evTarget(ev)]
 
+  teamPositionFromMatch = (participants, team) ->
+    participants.findIndex((p) -> p.id == team.id)
+
   unwrap = (state) ->
-    matches: state.matches.value()
+    teams: state.participants.value()
+    matches: state.matches.map((match) ->
+      # Create all new object, mutating match breaks internal state
+      a:
+        name: teamPositionFromMatch(state.participants, match.a.name)
+        score: match.a.score
+      b:
+        name: teamPositionFromMatch(state.participants, match.b.name)
+        score: match.b.score
+      round: match.round
+    ).value()
 
   makeStandings = (participants, pairs) ->
     participants.map((it) ->
@@ -62,12 +75,16 @@
   numberRe = new RegExp(/^[0-9]+$/)
 
 
-  # If attached to backend, this function could be overridden and return newly
+  # If attached to backend, these functions could be overridden and return newly
   # allocated identifier via Ajax query. For standalone purposes, we can just
   # increment the integer.
-  localCounter = 0
+  localMatchCounter = 0
   generateNewMatchId = () ->
-    ++localCounter
+    ++localMatchCounter
+
+  localTeamCounter = 0
+  generateNewTeamId = () ->
+    ++localTeamCounter
 
   group = ($container, participants, pairs, onchange) ->
 
@@ -95,7 +112,7 @@
         </colgroup>
         <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th></tr>
         {{#each this}}
-          <tr><td>{{name}}</td>'+standingsScoreColumnMarkup+'</tr>
+          <tr><td>{{name.name}}</td>'+standingsScoreColumnMarkup+'</tr>
         {{/each}}
         </table>
         </div>')
@@ -109,7 +126,7 @@
         </colgroup>
         <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th><th>Drop?</th></tr>
         {{#each this}}
-        <tr><td><input class="name" type="text" data-prev="{{name}}" value="{{name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{name}}">Drop</td></tr>
+        <tr><td><input class="name" type="text" data-prev="{{name.name}}" value="{{name.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{name.id}}">Drop</td></tr>
         {{/each}}
         <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
         </table>
@@ -126,18 +143,18 @@
 
       matchViewTemplate = Handlebars.compile('
         <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-        <span class="home">{{a.name}}</span>
+        <span class="home">{{a.name.name}}</span>
         <div class="home">{{a.score}}</div>
         <div class="away">{{b.score}}</div>
-        <span class="away">{{b.name}}</span>
+        <span class="away">{{b.name.name}}</span>
         </div>')
 
       matchEditTemplate = Handlebars.compile('
         <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-        <span class="home">{{a.name}}</span>
+        <span class="home">{{a.name.name}}</span>
         <input type="text" class="home" value="{{a.score}}" />
         <input type="text" class="away" value="{{b.score}}" />
-        <span class="away">{{b.name}}</span>
+        <span class="away">{{b.name.name}}</span>
         </div>')
 
       roundsTemplate = Handlebars.compile('<div class="rounds"></div>')
@@ -178,12 +195,14 @@
         markup.find("input.add").asEventStream("change").filter(isValid).map(".target").map($).map((el) ->
           el.val()
         ).onValue (value) ->
-          participantStream.push value
+          participantStream.push
+            id: generateNewTeamId()
+            name: value
 
         markup.find("td.drop").asEventStream("click").map(".target").map($).map((el) ->
           el.attr("data-name")
         ).onValue (value) ->
-          removeStream.push value
+          removeStream.push parseInt(value)
 
         markup
 
@@ -314,18 +333,18 @@
 
     participantRemoves = matchProp.sampledBy(removeStream, (propertyValue, streamValue) ->
       propertyValue.matches.filter((it) ->
-        it.a.name == streamValue || it.b.name == streamValue
+        it.a.name.id == streamValue || it.b.name.id == streamValue
       ).map((it) -> it.id).forEach (id) -> matchById(id).remove()
 
       roundsBefore = roundCount(propertyValue.participants.size())
 
       propertyValue.participants = propertyValue.participants.filter (it) ->
-        it != streamValue
+        it.id != streamValue
 
       roundsAfter = roundCount(propertyValue.participants.size())
 
       propertyValue.matches = propertyValue.matches.filter((it) ->
-        it.a.name != streamValue && it.b.name != streamValue
+        it.a.name.id != streamValue && it.b.name.id != streamValue
       ).map((it) ->
         if it.round > roundsAfter
           it.round = 0
@@ -344,12 +363,12 @@
 
     resultUpdates = matchProp.sampledBy(resultStream, (propertyValue, streamValue) ->
       propertyValue.matches = propertyValue.matches.map((it) ->
-        if it.a.name is streamValue.a.name and it.b.name is streamValue.b.name
+        if it.a.name.id is streamValue.a.name.id and it.b.name.id is streamValue.b.name.id
           if streamValue.round != undefined
             it.round = streamValue.round
           it.a.score = streamValue.a.score
           it.b.score = streamValue.b.score
-        else if it.a.name is streamValue.b.name and it.b.name is streamValue.a.name
+        else if it.a.name.id is streamValue.b.name.id and it.b.name.id is streamValue.a.name.id
           if streamValue.round != undefined
             it.round = streamValue.round
           it.a.score = streamValue.b.score
@@ -361,15 +380,14 @@
 
     participantRenames = matchProp.sampledBy(renameStream, (propertyValue, streamValue) ->
       propertyValue.participants = propertyValue.participants.map((it) ->
-        if it is streamValue.from
-          streamValue.to
-        else
-          it
+        if it.name is streamValue.from
+          it.name = streamValue.to
+        it
       )
       propertyValue.matches = propertyValue.matches.map((it) ->
-        if it.a.name is streamValue.from
-          it.a.name = streamValue.to
-        else it.b.name = streamValue.to  if it.b.name is streamValue.from
+        if it.a.name.name is streamValue.from
+          it.a.name.name = streamValue.to
+        else it.b.name.name = streamValue.to  if it.b.name.name is streamValue.from
         it
       )
       propertyValue
@@ -423,9 +441,12 @@
   methods = init: (opts) ->
     opts = opts or {}
     container = this
-    pairs = _(opts.init?.matches)
-    participants = pairs.pluck("a").union(pairs.pluck("b").value()).pluck("name").unique()
-    new group($('<div class="jqgroup"></div>').appendTo(container), participants, pairs, opts.save or null)
+    participants = _(opts.init.teams) #pairs.pluck("a").union(pairs.pluck("b").value()).pluck("name").unique()
+    pairs = _(opts.init.matches).map (it) ->
+      it.a.name = opts.init.teams[it.a.name]
+      it.b.name = opts.init.teams[it.b.name]
+      it
+    group($('<div class="jqgroup"></div>').appendTo(container), participants, pairs, opts.save or null)
 
   $.fn.group = (method) ->
     if methods[method]
