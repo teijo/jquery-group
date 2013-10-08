@@ -121,7 +121,7 @@
         </colgroup>
         <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th><th>Drop?</th></tr>
         {{#each this}}
-        <tr><td><input class="name" type="text" data-prev="{{name.name}}" value="{{name.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{name}}">Drop</td></tr>
+        <tr><td><input class="name" type="text" data-prev="{{name.name}}" value="{{name.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{name.id}}">Drop</td></tr>
         {{/each}}
         <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
         </table>
@@ -195,7 +195,7 @@
         markup.find("td.drop").asEventStream("click").map(".target").map($).map((el) ->
           el.attr("data-name")
         ).onValue (value) ->
-          removeStream.push value
+          removeStream.push parseInt(value)
 
         markup
 
@@ -326,18 +326,18 @@
 
     participantRemoves = matchProp.sampledBy(removeStream, (propertyValue, streamValue) ->
       propertyValue.matches.filter((it) ->
-        it.a.name == streamValue || it.b.name == streamValue
+        it.a.name.id == streamValue || it.b.name.id == streamValue
       ).map((it) -> it.id).forEach (id) -> matchById(id).remove()
 
       roundsBefore = roundCount(propertyValue.participants.size())
 
       propertyValue.participants = propertyValue.participants.filter (it) ->
-        it != streamValue
+        it.id != streamValue
 
       roundsAfter = roundCount(propertyValue.participants.size())
 
       propertyValue.matches = propertyValue.matches.filter((it) ->
-        it.a.name != streamValue && it.b.name != streamValue
+        it.a.name.id != streamValue && it.b.name.id != streamValue
       ).map((it) ->
         if it.round > roundsAfter
           it.round = 0
