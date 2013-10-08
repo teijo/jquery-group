@@ -127,18 +127,18 @@
 
       matchViewTemplate = Handlebars.compile('
         <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-        <span class="home">{{a.name}}</span>
+        <span class="home">{{a.name.name}}</span>
         <div class="home">{{a.score}}</div>
         <div class="away">{{b.score}}</div>
-        <span class="away">{{b.name}}</span>
+        <span class="away">{{b.name.name}}</span>
         </div>')
 
       matchEditTemplate = Handlebars.compile('
         <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-        <span class="home">{{a.name}}</span>
+        <span class="home">{{a.name.name}}</span>
         <input type="text" class="home" value="{{a.score}}" />
         <input type="text" class="away" value="{{b.score}}" />
-        <span class="away">{{b.name}}</span>
+        <span class="away">{{b.name.name}}</span>
         </div>')
 
       roundsTemplate = Handlebars.compile('<div class="rounds"></div>')
