@@ -15,6 +15,7 @@
     [ev, evTarget(ev)]
 
   unwrap = (state) ->
+    teams: state.participants.value()
     matches: state.matches.value()
 
   makeStandings = (participants, pairs) ->
@@ -344,12 +345,12 @@
 
     resultUpdates = matchProp.sampledBy(resultStream, (propertyValue, streamValue) ->
       propertyValue.matches = propertyValue.matches.map((it) ->
-        if it.a.name is streamValue.a.name and it.b.name is streamValue.b.name
+        if it.a.name.id is streamValue.a.name.id and it.b.name.id is streamValue.b.name.id
           if streamValue.round != undefined
             it.round = streamValue.round
           it.a.score = streamValue.a.score
           it.b.score = streamValue.b.score
-        else if it.a.name is streamValue.b.name and it.b.name is streamValue.a.name
+        else if it.a.name.id is streamValue.b.name.id and it.b.name.id is streamValue.a.name.id
           if streamValue.round != undefined
             it.round = streamValue.round
           it.a.score = streamValue.b.score
@@ -423,9 +424,12 @@
   methods = init: (opts) ->
     opts = opts or {}
     container = this
-    pairs = _(opts.init?.matches)
-    participants = pairs.pluck("a").union(pairs.pluck("b").value()).pluck("name").unique()
-    new group($('<div class="jqgroup"></div>').appendTo(container), participants, pairs, opts.save or null)
+    participants = _(opts.init.teams) #pairs.pluck("a").union(pairs.pluck("b").value()).pluck("name").unique()
+    pairs = _(opts.init.matches).map (it) ->
+      it.a.name = opts.init.teams[it.a.name]
+      it.b.name = opts.init.teams[it.b.name]
+      it
+    group($('<div class="jqgroup"></div>').appendTo(container), participants, pairs, opts.save or null)
 
   $.fn.group = (method) ->
     if methods[method]
