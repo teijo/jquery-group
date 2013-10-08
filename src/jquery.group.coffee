@@ -14,9 +14,20 @@
   evElTarget = (ev) ->
     [ev, evTarget(ev)]
 
+  teamPositionFromMatch = (participants, team) ->
+    participants.findIndex((p) -> p.id == team.id)
+
   unwrap = (state) ->
     teams: state.participants.value()
-    matches: state.matches.value()
+    matches: state.matches.map((match) ->
+      # Create all new object, mutating match breaks internal state
+      a:
+        name: teamPositionFromMatch(state.participants, match.a.name)
+        score: match.a.score
+      b:
+        name: teamPositionFromMatch(state.participants, match.b.name)
+        score: match.b.score
+    ).value()
 
   makeStandings = (participants, pairs) ->
     participants.map((it) ->
