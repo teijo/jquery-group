@@ -96,7 +96,7 @@
         </colgroup>
         <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th></tr>
         {{#each this}}
-          <tr><td>{{name}}</td>'+standingsScoreColumnMarkup+'</tr>
+          <tr><td>{{name.name}}</td>'+standingsScoreColumnMarkup+'</tr>
         {{/each}}
         </table>
         </div>')
@@ -110,7 +110,7 @@
         </colgroup>
         <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th><th>Drop?</th></tr>
         {{#each this}}
-        <tr><td><input class="name" type="text" data-prev="{{name}}" value="{{name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{name}}">Drop</td></tr>
+        <tr><td><input class="name" type="text" data-prev="{{name.name}}" value="{{name.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{name}}">Drop</td></tr>
         {{/each}}
         <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
         </table>
@@ -362,15 +362,14 @@
 
     participantRenames = matchProp.sampledBy(renameStream, (propertyValue, streamValue) ->
       propertyValue.participants = propertyValue.participants.map((it) ->
-        if it is streamValue.from
-          streamValue.to
-        else
-          it
+        if it.name is streamValue.from
+          it.name = streamValue.to
+        it
       )
       propertyValue.matches = propertyValue.matches.map((it) ->
-        if it.a.name is streamValue.from
-          it.a.name = streamValue.to
-        else it.b.name = streamValue.to  if it.b.name is streamValue.from
+        if it.a.name.name is streamValue.from
+          it.a.name.name = streamValue.to
+        else it.b.name.name = streamValue.to  if it.b.name.name is streamValue.from
         it
       )
       propertyValue
