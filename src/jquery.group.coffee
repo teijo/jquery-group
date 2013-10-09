@@ -439,11 +439,16 @@
   methods = init: (opts) ->
     opts = opts or {}
     container = this
-    participants = _(opts.init.teams) #pairs.pluck("a").union(pairs.pluck("b").value()).pluck("name").unique()
-    pairs = _(opts.init.matches).map (it) ->
-      it.a.team = opts.init.teams[it.a.team]
-      it.b.team = opts.init.teams[it.b.team]
-      it
+    participants = _()
+    pairs  = _()
+
+    if opts.init
+      participants = _(opts.init.teams)
+      pairs = _(opts.init.matches).map (it) ->
+        it.a.team = opts.init.teams[it.a.team]
+        it.b.team = opts.init.teams[it.b.team]
+        it
+
     group($('<div class="jqgroup"></div>').appendTo(container), participants, pairs, opts.save or null)
 
   $.fn.group = (method) ->
