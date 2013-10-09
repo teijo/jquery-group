@@ -422,9 +422,13 @@
         $unassigned = roundById(0)
         if $unassigned.length == 0
           $unassigned = $(Round.create(moveStream, 0).markup).appendTo($container)
-        unassignedMatches.filter((it) -> matchById(it.id).length == 0).each (it) ->
+        unassignedMatches.each (it) ->
+          $match = matchById(it.id)
           markup = Match.create(resultStream, it).markup
-          $unassigned.append(markup)
+          if $match.length
+            $match.replaceWith markup
+          else
+            $unassigned.append(markup)
 
     participants.each (it) ->
       participantStream.push it
