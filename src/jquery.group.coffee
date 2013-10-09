@@ -384,12 +384,6 @@
           it.name = streamValue.to
         it
       )
-      propertyValue.matches = propertyValue.matches.map((it) ->
-        if it.a.team.name is streamValue.from
-          it.a.team.name = streamValue.to
-        else it.b.team.name = streamValue.to  if it.b.team.name is streamValue.from
-        it
-      )
       propertyValue
     )
 
