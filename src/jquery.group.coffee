@@ -74,6 +74,68 @@
 
   numberRe = new RegExp(/^[0-9]+$/)
 
+  standingsScoreColumnMarkup = '
+    <td>{{wins}}</td>
+    <td>{{losses}}</td>
+    <td>{{ties}}</td>
+    <td>{{points}}</td>
+    <td title="Won {{roundWins}}, lost {{roundLosses}} bouts">{{ratio}}</td>'
+
+  standingsViewTemplate = Handlebars.compile('
+    <div class="standings">
+    <table>
+    <colgroup>
+    <col style="width: 50%">
+    <col span="5" style="width: 10%">
+    </colgroup>
+    <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th></tr>
+    {{#each this}}
+    <tr><td>{{team.name}}</td>'+standingsScoreColumnMarkup+'</tr>
+    {{/each}}
+    </table>
+    </div>')
+
+  standingsEditTemplate = Handlebars.compile('
+    <div class="standings">
+    <table>
+    <colgroup>
+    <col style="width: 40%">
+    <col span="6" style="width: 10%">
+    </colgroup>
+    <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th><th>Drop?</th></tr>
+    {{#each this}}
+    <tr><td><input class="name" type="text" data-prev="{{team.name}}" value="{{team.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{team.id}}">Drop</td></tr>
+    {{/each}}
+    <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
+    </table>
+    </div>')
+
+  roundTemplate = Handlebars.compile('
+    <div data-roundid="{{this}}" class="round">
+    {{#if this}}
+    <header>Round {{this}}</header>
+    {{else}}
+    <header>Unassigned</header>
+    {{/if}}
+    </div>')
+
+  matchViewTemplate = Handlebars.compile('
+    <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
+    <span class="home">{{a.team.name}}</span>
+    <div class="home">{{a.score}}</div>
+    <div class="away">{{b.score}}</div>
+    <span class="away">{{b.team.name}}</span>
+    </div>')
+
+  matchEditTemplate = Handlebars.compile('
+    <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
+    <span class="home">{{a.team.name}}</span>
+    <input type="text" class="home" value="{{a.score}}" />
+    <input type="text" class="away" value="{{b.score}}" />
+    <span class="away">{{b.team.name}}</span>
+    </div>')
+
+  roundsTemplate = Handlebars.compile('<div class="rounds"></div>')
 
   # If attached to backend, these functions could be overridden and return newly
   # allocated identifier via Ajax query. For standalone purposes, we can just
@@ -96,69 +158,6 @@
 
     $container.addClass "read-write"  if onchange
     templates = (->
-      standingsScoreColumnMarkup = '
-        <td>{{wins}}</td>
-        <td>{{losses}}</td>
-        <td>{{ties}}</td>
-        <td>{{points}}</td>
-        <td title="Won {{roundWins}}, lost {{roundLosses}} bouts">{{ratio}}</td>'
-
-      standingsViewTemplate = Handlebars.compile('
-        <div class="standings">
-        <table>
-        <colgroup>
-        <col style="width: 50%">
-        <col span="5" style="width: 10%">
-        </colgroup>
-        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th></tr>
-        {{#each this}}
-          <tr><td>{{team.name}}</td>'+standingsScoreColumnMarkup+'</tr>
-        {{/each}}
-        </table>
-        </div>')
-
-      standingsEditTemplate = Handlebars.compile('
-        <div class="standings">
-        <table>
-        <colgroup>
-        <col style="width: 40%">
-        <col span="6" style="width: 10%">
-        </colgroup>
-        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th><th>Drop?</th></tr>
-        {{#each this}}
-        <tr><td><input class="name" type="text" data-prev="{{team.name}}" value="{{team.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{team.id}}">Drop</td></tr>
-        {{/each}}
-        <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
-        </table>
-        </div>')
-
-      roundTemplate = Handlebars.compile('
-        <div data-roundid="{{this}}" class="round">
-        {{#if this}}
-          <header>Round {{this}}</header>
-        {{else}}
-          <header>Unassigned</header>
-        {{/if}}
-        </div>')
-
-      matchViewTemplate = Handlebars.compile('
-        <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-        <span class="home">{{a.team.name}}</span>
-        <div class="home">{{a.score}}</div>
-        <div class="away">{{b.score}}</div>
-        <span class="away">{{b.team.name}}</span>
-        </div>')
-
-      matchEditTemplate = Handlebars.compile('
-        <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-        <span class="home">{{a.team.name}}</span>
-        <input type="text" class="home" value="{{a.score}}" />
-        <input type="text" class="away" value="{{b.score}}" />
-        <span class="away">{{b.team.name}}</span>
-        </div>')
-
-      roundsTemplate = Handlebars.compile('<div class="rounds"></div>')
-
       standings: (participantStream, renameStream, removeStream, participants) ->
         participants = participants or _([])
         return $(standingsViewTemplate(participants.value()))  unless onchange
