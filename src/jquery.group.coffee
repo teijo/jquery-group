@@ -104,7 +104,7 @@
     </colgroup>
     <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th><th>Drop?</th></tr>
     {{#each this}}
-    <tr><td><input class="name" type="text" data-prev="{{team.name}}" value="{{team.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{team.id}}">Drop</td></tr>
+    <tr><td><input class="name" type="text" data-prev="{{team.name}}" data-teamid="{{team.id}}" value="{{team.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{team.id}}">Drop</td></tr>
     {{/each}}
     <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
     </table>
@@ -187,7 +187,7 @@
 
         markup.find("input.name").asEventStream("change").filter(isValid).map(".target").map($).onValue (el) ->
           renameStream.push
-            from: el.attr("data-prev")
+            id: parseInt(el.attr("data-teamid"))
             to: el.val()
           el.attr "data-prev", el.val()
 
@@ -379,7 +379,7 @@
 
     participantRenames = matchProp.sampledBy(renameStream, (propertyValue, streamValue) ->
       propertyValue.participants = propertyValue.participants.map((it) ->
-        if it.name is streamValue.from
+        if it.id == streamValue.id
           it.name = streamValue.to
         it
       )
