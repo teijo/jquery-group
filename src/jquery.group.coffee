@@ -167,7 +167,7 @@
         keyUps = markup.find("input").asEventStream("keyup").map(evTarget).map(($el) ->
           value = $el.val()
           previous = $el.attr("data-prev")
-          valid = value.length > 0 and (not participants.pluck("name").contains(value) or previous is value)
+          valid = value.length > 0 and (not participants.map((it) -> it.team).pluck("name").contains(value) or previous is value)
           el: $el
           value: value
           valid: valid
