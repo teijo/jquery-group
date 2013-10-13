@@ -319,11 +319,11 @@
       matches: _([])
     )
 
-    $standings = $('<div class="standings"></div>').appendTo($container)
-    $rounds = templates.rounds
-    templates.roundsHeader($rounds).appendTo($container)
-    $unassigned = $(Round.create(moveStream, 0).markup).appendTo($rounds)
-    $rounds.appendTo($container)
+    $rounds = templates.rounds.append $(Round.create(moveStream, 0).markup)
+    $container
+      .append(templates.standings(participantStream))
+      .append(templates.roundsHeader($rounds))
+      .append($rounds)
 
     participantAdds = matchProp.sampledBy(participantStream, (propertyValue, streamValue) ->
       if propertyValue.participants.size() > 0
@@ -418,8 +418,6 @@
     participantAdds.merge(resultUpdates).merge(participantRemoves).throttle(10).onValue (state) ->
       $container.find(".standings").replaceWith templates.standings(participantStream,
         renameStream, removeStream, makeStandings(state.participants, state.matches), null)
-
-    $standings.replaceWith templates.standings(participantStream)
 
     participantRenames.merge(participantAdds).merge(resultUpdates).throttle(10).onValue (state) ->
       assignedMatches = state.matches.filter(((it) -> it.round))
