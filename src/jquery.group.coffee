@@ -1,4 +1,9 @@
 (($) ->
+  scoringScheme =
+    win: 3,
+    tie: 1,
+    loss: 0
+
   # 2n teams -> n-1 rounds, 2n+1 teams -> n rounds
   roundCount = (participantCount) ->
     participantCount - 1 + (participantCount % 2)
@@ -63,7 +68,7 @@
       wins: wins
       losses: losses
       ties: ties
-      points: wins * 3 + ties
+      points: wins * scoringScheme.win + ties * scoringScheme.tie + losses * scoringScheme.loss
       roundWins: roundWins
       roundLosses: roundLosses
       ratio: roundWins - roundLosses
