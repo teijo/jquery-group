@@ -95,7 +95,7 @@
     </colgroup>
     <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th></tr>
     {{#each this}}
-    <tr><td>{{team.name}}</td>'+standingsScoreColumnMarkup+'</tr>
+    <tr><td>{{#if team.label}}{{team.label}}{{else}}{{team.name}}{{/if}}</td>'+standingsScoreColumnMarkup+'</tr>
     {{/each}}
     </table>
     </div>')
@@ -126,10 +126,10 @@
 
   matchViewTemplate = Handlebars.compile('
     <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-    <span class="home">{{a.team.name}}</span>
+    <span class="home">{{a.team.label}}</span>
     <div class="home">{{a.score}}</div>
     <div class="away">{{b.score}}</div>
-    <span class="away">{{b.team.name}}</span>
+    <span class="away">{{b.team.label}}</span>
     </div>')
 
   matchEditTemplate = Handlebars.compile('
@@ -144,6 +144,9 @@
     <header class="roundsHeader">Rounds</header>')
 
   roundsTemplate = Handlebars.compile('<div class="rounds"></div>')
+
+  defaultLabeler = (team) ->
+    team.name
 
   # If attached to backend, these functions could be overridden and return newly
   # allocated identifier via Ajax query. For standalone purposes, we can just
@@ -450,12 +453,13 @@
 
   methods = init: (opts) ->
     opts = opts or {}
+    labeler = opts.labeler or defaultLabeler
     container = this
     participants = _()
     pairs  = _()
 
     if opts.init
-      participants = _(opts.init.teams)
+      participants = _(opts.init.teams).map((it) -> it.label = new Handlebars.SafeString(labeler(it)); it)
       pairs = _(opts.init.matches).map (it) ->
         it.a.team = opts.init.teams[it.a.team]
         it.b.team = opts.init.teams[it.b.team]
