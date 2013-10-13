@@ -111,7 +111,7 @@
     {{#each this}}
     <tr><td><input class="name" type="text" data-prev="{{team.name}}" data-teamid="{{team.id}}" value="{{team.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{team.id}}">Drop</td></tr>
     {{/each}}
-    <tr><td><input class="add" type="text" value="{{name}}" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
+    <tr><td><input class="add" type="text" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
     </table>
     </div>')
 
