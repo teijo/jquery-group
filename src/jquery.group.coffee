@@ -135,6 +135,9 @@
     <span class="away">{{b.team.name}}</span>
     </div>')
 
+  roundsHeaderTemplate = Handlebars.compile('
+    <header class="roundsHeader">Rounds</header>')
+
   roundsTemplate = Handlebars.compile('<div class="rounds"></div>')
 
   # If attached to backend, these functions could be overridden and return newly
@@ -205,6 +208,10 @@
 
         markup
 
+      roundsHeader: ($rounds) ->
+        tmpl = $(roundsHeaderTemplate())
+        tmpl.asEventStream("click").onValue () -> $rounds.toggle()
+        tmpl
       rounds: $(roundsTemplate())
       round: (roundNumber) -> $(roundTemplate(roundNumber))
       matchEdit: (match) -> $(matchEditTemplate(match))
@@ -296,8 +303,6 @@
           return
     )()
 
-    $standings = $('<div class="standings"></div>').appendTo($container)
-    $rounds = templates.rounds.appendTo($container)
     matchStream = new Bacon.Bus()
     participantStream = new Bacon.Bus()
     renameStream = new Bacon.Bus()
@@ -308,6 +313,12 @@
       participants: _([])
       matches: _([])
     )
+
+    $standings = $('<div class="standings"></div>').appendTo($container)
+    $rounds = templates.rounds
+    templates.roundsHeader($rounds).appendTo($container)
+    $unassigned = $(Round.create(moveStream, 0).markup).appendTo($rounds)
+    $rounds.appendTo($container)
 
     participantAdds = matchProp.sampledBy(participantStream, (propertyValue, streamValue) ->
       if propertyValue.participants.size() > 0
@@ -324,7 +335,7 @@
 
       propertyValue.participants.push streamValue
       rounds = roundCount(propertyValue.participants.size())
-      _(_.range($rounds.find(".round").length, rounds)).each (it) ->
+      _(_.range($rounds.find(".round").length - 1, rounds)).each (it) ->
         $rounds.append Round.create(moveStream, it + 1).markup
 
       propertyValue
@@ -419,8 +430,7 @@
 
       if unassignedMatches.size() > 0 || onchange
         $unassigned = roundById(0)
-        if $unassigned.length == 0
-          $unassigned = $(Round.create(moveStream, 0).markup).appendTo($container)
+        $unassigned.show()
         unassignedMatches.each (it) ->
           $match = matchById(it.id)
           markup = Match.create(resultStream, it).markup

@@ -75,6 +75,10 @@
         background-color: #F00
   .rounds
     background-color: #999
+  .roundsHeader
+    cursor: pointer
+    &:hover
+      background-color: #999
   .unassigned
     background-color: #AAA
   .participant
@@ -114,6 +118,8 @@
         background-color: #8F8
     .match
       float: none
+  [data-roundid="0"]
+    display: none
   header
     padding: 0 2px
     font-size: 13px
