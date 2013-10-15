@@ -93,7 +93,7 @@
     <col style="width: 50%">
     <col span="5" style="width: 10%">
     </colgroup>
-    <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th></tr>
+    <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>&plusmn;</th></tr>
     {{#each this}}
     <tr><td>{{#if team.label}}{{team.label}}{{else}}{{team.name}}{{/if}}</td>'+standingsScoreColumnMarkup+'</tr>
     {{/each}}
