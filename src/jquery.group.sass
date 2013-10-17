@@ -29,10 +29,11 @@
       color: #FEE
 
 .jqgroup
+  font-family: "Arial"
+  font-size: 14px
   width: 100%
-  background-color: #CCC
+  background-color: transparent
   display: inline-block
-  border: 1px solid #999
   box-sizing: border-box
   .standings
     margin: 2px
@@ -41,8 +42,8 @@
     table
       border-spacing: 0
       width: 100%
-      td
-        padding: 0
+      td, th
+        padding: 3px
       td:nth-child(6)
         cursor: help
         &:hover
@@ -88,13 +89,14 @@
       border-top: 1px solid #CCC
     min-width: 50px
     text-align: center
+    div, span
+      box-sizing: border-box
+      padding: 3px
     input[type=text], div
       display: inline-block
       font-size: 14px
       max-width: 35px
-      font-weight: bold
       width: 10%
-      padding: 0
       margin: 0 1%
       border: none
       text-align: center
@@ -105,7 +107,7 @@
       overflow: hidden
     span.home
       width: 35%
-      text-align: right
+      text-align: left
     span.away
       width: 35%
       text-align: left
