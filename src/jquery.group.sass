@@ -59,7 +59,6 @@
       width: 100%
       background: transparent
       height: 20px
-      border-radius: 3px
       &.add
         background-color: #999
     td:not(:first-child)
@@ -74,7 +73,8 @@
       &:hover
         background-color: #F00
   .rounds
-    background-color: #999
+    background-color: #EEE
+    border-top: 1px solid #999
   .roundsHeader
     cursor: pointer
     &:hover
@@ -84,8 +84,9 @@
   .participant
     background-color: #EEE
   .match
+    &:nth-child(n+3)
+      border-top: 1px solid #CCC
     min-width: 50px
-    background-color: #BBB
     text-align: center
     input[type=text], div
       display: inline-block
@@ -96,10 +97,9 @@
       padding: 0
       margin: 0 1%
       border: none
-      border-radius: 2px
       text-align: center
-      background-color: #BBB
     span
+      height: 22px
       display: inline-block
       white-space: nowrap
       overflow: hidden
@@ -110,7 +110,8 @@
       width: 35%
       text-align: left
   .round
-    background-color: #AAA
+    &:nth-child(n+3)
+      margin-top: 10px
     clear: both
     &.droppable
       background-color: #8C8
