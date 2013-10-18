@@ -127,8 +127,8 @@
   matchViewTemplate = Handlebars.compile('
     <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
     <span class="home">{{a.team.label}}</span>
-    <div class="home">{{a.score}}</div>
-    <div class="away">{{b.score}}</div>
+    <div class="home {{homeClass}}">{{a.score}}</div>
+    <div class="away {{awayClass}}">{{b.score}}</div>
     <span class="away">{{b.team.label}}</span>
     </div>')
 
@@ -223,7 +223,12 @@
       rounds: $(roundsTemplate())
       round: (roundNumber) -> $(roundTemplate(roundNumber))
       matchEdit: (match) -> $(matchEditTemplate(match))
-      matchView: (match) -> $(matchViewTemplate(match))
+      matchView: (match) ->
+        homeWins = match.a.score > match.b.score
+        classes =
+          homeClass: if homeWins then "win" else "lose"
+          awayClass: if homeWins then "lose" else "win"
+        $(matchViewTemplate(_.extend(classes, match)))
     )()
 
     Round = (->

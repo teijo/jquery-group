@@ -72,8 +72,10 @@
       &:hover
         background-color: #F00
   .rounds
-    background-color: #EEE
+    background-color: #DDD
     border-top: 1px solid #999
+    float: left
+    width: 100%
   .roundsHeader
     cursor: pointer
     &:hover
@@ -87,15 +89,18 @@
       border-top: 1px solid #CCC
     min-width: 50px
     text-align: center
+    float: left
+    clear: both
+    width: 100%
     div, span
       box-sizing: border-box
       padding: 3px
+      float: left
     input[type=text], div
       display: inline-block
       font-size: 14px
       max-width: 35px
       width: 10%
-      margin: 0 1%
       border: none
       text-align: center
     span
@@ -103,11 +108,17 @@
       display: inline-block
       white-space: nowrap
       overflow: hidden
+    div
+      background-color: rgba(255,255,255,0.3)
+      &.win
+        color: #060
+      &.lose
+        color: #900
     span.home
-      width: 35%
+      width: 40%
       text-align: left
     span.away
-      width: 35%
+      width: 40%
       text-align: left
   .round
     &:nth-child(n+3)
@@ -117,8 +128,6 @@
       background-color: #8C8
       &.over
         background-color: #8F8
-    .match
-      float: none
   [data-roundid="0"]
     display: none
   header
