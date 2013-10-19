@@ -95,7 +95,7 @@
     </colgroup>
     <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>&plusmn;</th></tr>
     {{#each this}}
-    <tr><td>{{#if team.label}}{{team.label}}{{else}}{{team.name}}{{/if}}</td>'+standingsScoreColumnMarkup+'</tr>
+    <tr data-teamid="{{team.id}}"><td>{{#if team.label}}{{team.label}}{{else}}{{team.name}}{{/if}}</td>'+standingsScoreColumnMarkup+'</tr>
     {{/each}}
     </table>
     </div>')
@@ -126,10 +126,10 @@
 
   matchViewTemplate = Handlebars.compile('
     <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-    <div class="label">{{a.team.label}}</div>
+    <div data-teamid="{{a.team.id}}" class="label">{{a.team.label}}</div>
     <div class="score {{homeClass}}">{{a.score}}</div>
     <div class="score {{awayClass}}">{{b.score}}</div>
-    <div class="label">{{b.team.label}}</div>
+    <div data-teamid="{{b.team.id}}" class="label">{{b.team.label}}</div>
     </div>')
 
   matchEditTemplate = Handlebars.compile('
@@ -171,7 +171,21 @@
     templates = (->
       standings: (participantStream, renameStream, removeStream, participants) ->
         participants = participants or _([])
-        return $(standingsViewTemplate(participants.value()))  unless onchange
+        if !onchange
+          $markup = $(standingsViewTemplate(participants.value()))
+          $markup.find("[data-teamid]").hover(
+            (()->
+              teamId = $(this).attr("data-teamid")
+              console.log teamId
+              $container.find("[data-teamid=#{teamId}]").addClass("highlight")
+            ),
+            (() ->
+              teamId = $(this).attr("data-teamid")
+              console.log "out"
+              $container.find("[data-teamid=#{teamId}]").removeClass("highlight")
+            )
+          )
+          return $markup
         markup = $(standingsEditTemplate(participants.value()))
         $submit = markup.find("input[type=submit]")
 
