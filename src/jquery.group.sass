@@ -88,38 +88,31 @@
     &:nth-child(n+3)
       border-top: 1px solid #CCC
     min-width: 50px
-    text-align: center
     float: left
     clear: both
     width: 100%
-    div, span
+    div.score, div.label
       box-sizing: border-box
       padding: 3px
       float: left
-    input[type=text], div
+    input[type=text].score, div.score
       display: inline-block
       font-size: 14px
-      max-width: 35px
       width: 10%
       border: none
       text-align: center
-    span
+    div.label
       height: 22px
       display: inline-block
       white-space: nowrap
       overflow: hidden
-    div
+      width: 40%
+    div.score
       background-color: rgba(255,255,255,0.3)
       &.win
         color: #060
       &.lose
         color: #900
-    span.home
-      width: 40%
-      text-align: left
-    span.away
-      width: 40%
-      text-align: left
   .round
     &:nth-child(n+3)
       margin-top: 10px
