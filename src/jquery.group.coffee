@@ -126,10 +126,14 @@
 
   matchViewTemplate = Handlebars.compile('
     <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-    <div data-teamid="{{a.team.id}}" class="label">{{a.team.label}}</div>
-    <div class="score {{homeClass}}">{{a.score}}</div>
-    <div class="score {{awayClass}}">{{b.score}}</div>
-    <div data-teamid="{{b.team.id}}" class="label">{{b.team.label}}</div>
+      <div class="team" data-teamid="{{a.team.id}}">
+        <div class="label">{{a.team.label}}</div>
+        <div class="score {{homeClass}}">{{a.score}}</div>
+      </div>
+      <div class="team" data-teamid="{{b.team.id}}">
+        <div class="score {{awayClass}}">{{b.score}}</div>
+        <div class="label">{{b.team.label}}</div>
+      </div>
     </div>')
 
   matchEditTemplate = Handlebars.compile('
