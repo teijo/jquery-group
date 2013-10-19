@@ -159,6 +159,11 @@
   generateNewTeamId = () ->
     ++localTeamCounter
 
+  teamHover = ($container, enabled) ->
+    () ->
+      teamId = $(@).attr("data-teamid")
+      $container.find("[data-teamid=#{teamId}]").toggleClass("highlight", enabled)
+
   group = ($container, participants, pairs, onchange) ->
 
     roundById = (id) ->
@@ -173,18 +178,8 @@
         participants = participants or _([])
         if !onchange
           $markup = $(standingsViewTemplate(participants.value()))
-          $markup.find("[data-teamid]").hover(
-            (()->
-              teamId = $(this).attr("data-teamid")
-              console.log teamId
-              $container.find("[data-teamid=#{teamId}]").addClass("highlight")
-            ),
-            (() ->
-              teamId = $(this).attr("data-teamid")
-              console.log "out"
-              $container.find("[data-teamid=#{teamId}]").removeClass("highlight")
-            )
-          )
+          over = teamHover.bind(null, $container)
+          $markup.find("[data-teamid]").hover over(true), over(false)
           return $markup
         markup = $(standingsEditTemplate(participants.value()))
         $submit = markup.find("input[type=submit]")
