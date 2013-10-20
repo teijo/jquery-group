@@ -1,3 +1,10 @@
+# jQuery Group
+#
+# Copyright (c) 2013, Teijo Laine,
+# http://aropupu.fi/group/
+#
+# Licenced under the MIT licence
+
 (($) ->
   scoringScheme =
     win: 3,
