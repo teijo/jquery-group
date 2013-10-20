@@ -30,7 +30,7 @@ module.exports = (grunt) ->
     coffee:
       compile:
         files:
-          "src/jquery.group.js": "src/jquery.group.coffee"
+          "dist/jquery.group.js": "src/jquery.group.coffee"
 
     cssmin:
       dist:
@@ -43,7 +43,7 @@ module.exports = (grunt) ->
 
       dist:
         files:
-          "dist/<%= pkg.name %>.min.js": ["src/<%= pkg.name %>.js"]
+          "dist/<%= pkg.name %>.min.js": ["dist/<%= pkg.name %>.js"]
 
   grunt.loadNpmTasks "grunt-contrib-coffee"
   grunt.loadNpmTasks "grunt-contrib-uglify"

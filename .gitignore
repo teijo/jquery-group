@@ -4,3 +4,4 @@ node_modules
 *.iml
 *.swp
 dist/jquery.group.css
+dist/jquery.group.js
