@@ -138,10 +138,14 @@
 
   matchEditTemplate = Handlebars.compile('
     <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-    <div class="label">{{a.team.name}}</div>
-    <input type="text" class="score home" value="{{a.score}}" />
-    <input type="text" class="score away" value="{{b.score}}" />
-    <div class="label">{{b.team.name}}</div>
+      <div class="team" data-teamid="{{b.team.id}}">
+        <div class="label">{{a.team.name}}</div>
+        <input type="text" class="score home" value="{{a.score}}" />
+      </div>
+      <div class="team" data-teamid="{{b.team.id}}">
+        <input type="text" class="score away" value="{{b.score}}" />
+        <div class="label">{{b.team.name}}</div>
+      </div>
     </div>')
 
   roundsHeaderTemplate = Handlebars.compile('
