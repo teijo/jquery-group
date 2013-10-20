@@ -11,6 +11,7 @@
   .standings
     table
       td:first-child
+        padding: 0 /* In edit mode, td padding is delegated to input element */
         &:hover:before
           color: #333
           font-size: 1em
@@ -53,11 +54,11 @@
     input[type=submit]
       width: 100%
     input[type=text]
-      padding: 0
+      margin: 0
+      padding: 3px
       border: none
       width: 100%
       background-color: transparent
-      height: 20px
       &.add
         background-color: #999
     td:not(:first-child)
@@ -99,30 +100,27 @@
     div.team
       float: left
       width: 50%
-    input[type=text].score
-      height: 22px
-      background-color: rgba(255,255,255,0.3)
-    input[type=text].score, div.score, div.label
+    .score, div.label
       box-sizing: border-box
       padding: 3px
       float: left
-    input[type=text].score, div.score
+    .score
       font-size: 14px
+      height: 22px
       width: 20%
       border: none
       text-align: center
+      background-color: rgba(255,255,255,0.3)
+      &.win
+        color: #060
+      &.lose
+        color: #900
     div.label
       height: 22px
       display: inline-block
       white-space: nowrap
       overflow: hidden
       width: 80%
-    div.score
-      background-color: rgba(255,255,255,0.3)
-      &.win
-        color: #060
-      &.lose
-        color: #900
   .round
     width: 100%
     float: left
