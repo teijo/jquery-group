@@ -114,7 +114,7 @@
     <col style="width: 40%">
     <col span="6" style="width: 10%">
     </colgroup>
-    <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th><th></th></tr>
+    <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>&plusmn;</th><th></th></tr>
     {{#each this}}
     <tr><td><input class="name" type="text" data-prev="{{team.name}}" data-teamid="{{team.id}}" value="{{team.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{team.id}}" title="Drop team">&#x2A2F;</td></tr>
     {{/each}}
