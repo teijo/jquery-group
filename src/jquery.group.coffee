@@ -330,11 +330,11 @@
 
           markup.asEventStream("dragstart").map(".originalEvent").map(evElTarget).onValues (ev, $el) ->
             ev.dataTransfer.setData "Text", match.id
-            $el.css "opacity", 0.5
+            $el.css "opacity", 0.5, ""
             $container.find(".round").addClass "droppable"
 
           markup.asEventStream("dragend").map(".originalEvent").map(evElTarget).onValues (ev, $el) ->
-            $el.css "opacity", 1.0
+            $el.removeAttr "style"
             $container.find(".droppable").removeClass "droppable"
 
           return

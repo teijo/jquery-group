@@ -12,11 +12,22 @@
     cursor: move
     &:hover
       background-color: #CCC
-  .round
-    padding-bottom: 10px
+  .rounds
+    .round
+      padding-bottom: 10px
+      &:first-child
+        background-color: #F99
+        .match
+          background-color: #FCC
+          .team
+            border-color: #FAA
   &:hover
-    input[type=text].score, input[type=text]
-      background-color: #CCC
+    .standings
+      input[type=text]
+        background-color: rgba(0,0,0,0.2)
+    .rounds
+      input[type=text].score
+        background-color: rgba(255,255,255,0.7)
   .standings
     table
       td:first-child
@@ -27,7 +38,7 @@
           content: '\0270E'
           position: absolute
           left: -1em
-  input[type=text].score, input[type=text]
+  .rounds input[type=text].score, .standings input[type=text]
     &:hover
       color: #EEE
       background-color: #666
@@ -138,6 +149,8 @@
     clear: both
     &.droppable
       background-color: #8C8
+      .match
+        opacity: 0.7
       &.over
         background-color: #8F8
   [data-roundid="0"]
