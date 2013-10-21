@@ -116,7 +116,7 @@
     </colgroup>
     <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>R</th><th></th></tr>
     {{#each this}}
-    <tr><td><input class="name" type="text" data-prev="{{team.name}}" data-teamid="{{team.id}}" value="{{team.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{team.id}}" title="Drop team">&#x232B;</td></tr>
+    <tr><td><input class="name" type="text" data-prev="{{team.name}}" data-teamid="{{team.id}}" value="{{team.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{team.id}}" title="Drop team">&#x2A2F;</td></tr>
     {{/each}}
     <tr><td><input class="add" type="text" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
     </table>
