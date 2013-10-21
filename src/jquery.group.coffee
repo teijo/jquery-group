@@ -95,40 +95,40 @@
 
   standingsViewTemplate = Handlebars.compile('
     <div class="standings">
-    <table>
-    <colgroup>
-    <col style="width: 50%">
-    <col span="5" style="width: 10%">
-    </colgroup>
-    <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>&plusmn;</th></tr>
-    {{#each this}}
-    <tr data-teamid="{{team.id}}"><td>{{#if team.label}}{{team.label}}{{else}}{{team.name}}{{/if}}</td>'+standingsScoreColumnMarkup+'</tr>
-    {{/each}}
-    </table>
+      <table>
+        <colgroup>
+          <col style="width: 50%">
+          <col span="5" style="width: 10%">
+        </colgroup>
+        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>&plusmn;</th></tr>
+        {{#each this}}
+          <tr data-teamid="{{team.id}}"><td>{{#if team.label}}{{team.label}}{{else}}{{team.name}}{{/if}}</td>'+standingsScoreColumnMarkup+'</tr>
+        {{/each}}
+      </table>
     </div>')
 
   standingsEditTemplate = Handlebars.compile('
     <div class="standings">
-    <table>
-    <colgroup>
-    <col style="width: 40%">
-    <col span="6" style="width: 10%">
-    </colgroup>
-    <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>&plusmn;</th><th></th></tr>
-    {{#each this}}
-    <tr><td><input class="name" type="text" data-prev="{{team.name}}" data-teamid="{{team.id}}" value="{{team.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{team.id}}" title="Drop team">&#x2A2F;</td></tr>
-    {{/each}}
-    <tr><td><input class="add" type="text" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
-    </table>
+      <table>
+        <colgroup>
+          <col style="width: 40%">
+          <col span="6" style="width: 10%">
+        </colgroup>
+        <tr><th></th><th>W</th><th>L</th><th>T</th><th>P</th><th>&plusmn;</th><th></th></tr>
+        {{#each this}}
+          <tr><td><input class="name" type="text" data-prev="{{team.name}}" data-teamid="{{team.id}}" value="{{team.name}}" /></td>'+standingsScoreColumnMarkup+'<td class="drop" data-name="{{team.id}}" title="Drop team">&#x2A2F;</td></tr>
+        {{/each}}
+        <tr><td><input class="add" type="text" /></td><td colspan="6"><input type="submit" value="Add" disabled="disabled" /></td></tr>
+      </table>
     </div>')
 
   roundTemplate = Handlebars.compile('
     <div data-roundid="{{this}}" class="round">
-    {{#if this}}
-    <header>Round {{this}}</header>
-    {{else}}
-    <header>Unassigned</header>
-    {{/if}}
+      {{#if this}}
+        <header>Round {{this}}</header>
+      {{else}}
+        <header>Unassigned</header>
+      {{/if}}
     </div>')
 
   matchViewTemplate = Handlebars.compile('
