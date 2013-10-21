@@ -147,13 +147,20 @@
     <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
       <div class="team" data-teamid="{{b.team.id}}">
         <div class="label">{{a.team.name}}</div>
-        <input type="text" class="score home" value="{{a.score}}" />
+        <input type="text" class="score home {{homeClass}}" value="{{a.score}}" />
       </div>
       <div class="team" data-teamid="{{b.team.id}}">
-        <input type="text" class="score away" value="{{b.score}}" />
+        <input type="text" class="score away {{awayClass}}" value="{{b.score}}" />
         <div class="label">{{b.team.name}}</div>
       </div>
     </div>')
+
+  matchTemplate = (match, template) ->
+    homeWins = match.a.score > match.b.score
+    classes =
+      homeClass: if homeWins then "win" else "lose"
+      awayClass: if homeWins then "lose" else "win"
+    $(template(_.extend(classes, match)))
 
   roundsHeaderTemplate = Handlebars.compile('
     <header class="roundsHeader">Rounds</header>')
@@ -246,13 +253,10 @@
         tmpl
       rounds: $(roundsTemplate())
       round: (roundNumber) -> $(roundTemplate(roundNumber))
-      matchEdit: (match) -> $(matchEditTemplate(match))
+      matchEdit: (match) ->
+        matchTemplate(match, matchEditTemplate)
       matchView: (match) ->
-        homeWins = match.a.score > match.b.score
-        classes =
-          homeClass: if homeWins then "win" else "lose"
-          awayClass: if homeWins then "lose" else "win"
-        $(matchViewTemplate(_.extend(classes, match)))
+        matchTemplate(match, matchViewTemplate)
     )()
 
     Round = (->
