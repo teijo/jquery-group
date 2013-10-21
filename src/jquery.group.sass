@@ -22,12 +22,9 @@
           .team
             border-color: #FAA
   &:hover
-    .standings
-      input[type=text]
-        background-color: rgba(0,0,0,0.2)
-    .rounds
-      input[type=text].score
-        background-color: rgba(255,255,255,0.7)
+    input[type=text]
+      text-decoration: underline
+
   .standings
     table
       td:first-child
@@ -39,12 +36,11 @@
           position: absolute
           left: -1em
   .rounds input[type=text].score, .standings input[type=text]
-    &:hover
-      color: #EEE
-      background-color: #666
     &:focus
-      background-color: #333
-      color: #FFF
+      text-decoration: none
+      background-color: #FFF
+      border: 1px solid black
+      color: #000
     &.conflict, &.add.conflict
       background-color: #900
       color: #FEE
@@ -55,6 +51,9 @@
   width: 100%
   display: inline-block
   box-sizing: border-box
+  input
+    box-sizing: border-box
+    height: 22px
   .standings
     white-space: nowrap
     overflow: hidden
@@ -69,8 +68,6 @@
           background-color: rgba(255,255,255,0.6)
       td:first-child
         position: relative
-      &.add
-        background-color: #999
     input[type=submit]
       width: 100%
     input[type=text]
@@ -80,7 +77,7 @@
       width: 100%
       background-color: transparent
       &.add
-        background-color: #999
+        border: 1px solid #000
     td:not(:first-child)
       text-align: center
       background-color: rgba(255,255,255,0.3)
