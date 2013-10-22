@@ -7,6 +7,9 @@
  * Licenced under the MIT licence
  */
 
+$boxHeight: 22px
+$boxPadding: 3px
+
 .jqgroup.read-write
   cursor: default
   .match
@@ -50,7 +53,7 @@
   box-sizing: border-box
   input
     box-sizing: border-box
-    height: 22px
+    height: $boxHeight
   .standings
     white-space: nowrap
     overflow: hidden
@@ -58,7 +61,7 @@
       border-spacing: 0
       width: 100%
       td, th
-        padding: 3px
+        padding: $boxPadding
       td:nth-child(6)
         cursor: help
         &:hover
@@ -69,7 +72,7 @@
       width: 100%
     input[type=text]
       margin: 0
-      padding: 3px
+      padding: $boxPadding
       border: none
       width: 100%
       background-color: transparent
@@ -116,11 +119,11 @@
       width: 50%
     .score, div.label
       box-sizing: border-box
-      padding: 3px
+      padding: $boxPadding
       float: left
     .score
       font-size: 14px
-      height: 22px
+      height: $boxHeight
       width: 20%
       border: none
       text-align: center
@@ -130,7 +133,7 @@
       &.lose
         color: #900
     div.label
-      height: 22px
+      height: $boxHeight
       display: inline-block
       white-space: nowrap
       overflow: hidden
