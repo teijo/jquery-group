@@ -30,7 +30,10 @@
     participants.findIndex((p) -> p.id == team.id)
 
   unwrap = (state) ->
-    teams: state.participants.value()
+    teams: state.participants.value().map((team) ->
+      id: team.id
+      name: team.name
+    )
     matches: state.matches.map((match) ->
       # Create all new object, mutating match breaks internal state
       a:
