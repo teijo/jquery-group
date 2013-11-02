@@ -8,6 +8,11 @@ round-robin matchups for each team.
 You can find mode information and demos from the project website at
 [aropupu.fi/group](http://www.aropupu.fi/group/).
 
+Download
+--------
+
+Get latest pre-compiled version from `dist/`.
+
 Compile code
 ------------
 
