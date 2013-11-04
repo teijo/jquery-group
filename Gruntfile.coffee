@@ -1,5 +1,6 @@
 module.exports = (grunt) ->
   grunt.initConfig
+    licenseString: '/* jQuery Group | Copyright (c) Teijo Laine <%= grunt.template.today("yyyy") %> | Licenced under the MIT licence */'
     pkg: grunt.file.readJSON("package.json")
     watch:
       scripts:
@@ -37,12 +38,12 @@ module.exports = (grunt) ->
         files:
           "dist/<%= pkg.name %>.min.css": "dist/<%= pkg.name %>.css"
       options:
-        banner: '/* jQuery Group | Copyright (c) Teijo Laine <%= grunt.template.today("yyyy") %> | Licenced under the MIT licence */'
+        banner: '<%= licenseString %>'
 
     uglify:
       options:
         compress: true
-        banner: '/* jQuery Group | Copyright (c) Teijo Laine <%= grunt.template.today("yyyy") %> | Licenced under the MIT licence */\n'
+        banner: '<%= licenseString %>\n'
 
       dist:
         files:
