@@ -36,10 +36,13 @@ module.exports = (grunt) ->
       dist:
         files:
           "dist/<%= pkg.name %>.min.css": "dist/<%= pkg.name %>.css"
+      options:
+        banner: '/* jQuery Group | Copyright (c) Teijo Laine <%= grunt.template.today("yyyy") %> | Licenced under the MIT licence */'
 
     uglify:
       options:
         compress: true
+        banner: '/* jQuery Group | Copyright (c) Teijo Laine <%= grunt.template.today("yyyy") %> | Licenced under the MIT licence */\n'
 
       dist:
         files:
