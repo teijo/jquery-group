@@ -151,12 +151,12 @@
   matchEditTemplate = Handlebars.compile('
     <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
       <div class="team" data-teamid="{{b.team.id}}">
-        <div class="label">{{a.team.name}}</div>
+        <div class="label">{{a.team.label}}</div>
         <input type="text" class="score home {{homeClass}}" value="{{a.score}}" />
       </div>
       <div class="team" data-teamid="{{b.team.id}}">
         <input type="text" class="score away {{awayClass}}" value="{{b.score}}" />
-        <div class="label">{{b.team.name}}</div>
+        <div class="label">{{b.team.label}}</div>
       </div>
     </div>')
 
@@ -191,7 +191,7 @@
       teamId = $(@).attr("data-teamid")
       $container.find("[data-teamid=#{teamId}]").toggleClass("highlight", enabled)
 
-  group = ($container, participants, pairs, onchange) ->
+  group = ($container, participants, pairs, onchange, labeler) ->
 
     roundById = (id) ->
       $container.find("[data-roundid='#{id}']")
@@ -439,6 +439,7 @@
       propertyValue.participants = propertyValue.participants.map((it) ->
         if it.id == streamValue.id
           it.name = streamValue.to
+          it.label = new Handlebars.SafeString(labeler(it))
         it
       )
       propertyValue
@@ -504,7 +505,7 @@
         it.b.team = opts.init.teams[it.b.team]
         it
 
-    group($('<div class="jqgroup"></div>').appendTo(container), participants, pairs, opts.save or null)
+    group($('<div class="jqgroup"></div>').appendTo(container), participants, pairs, opts.save or null, labeler)
 
   $.fn.group = (method) ->
     if methods[method]
