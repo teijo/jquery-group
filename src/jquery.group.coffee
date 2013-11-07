@@ -33,6 +33,8 @@
     teams: state.participants.value().map((team) ->
       id: team.id
       name: team.name
+      format: team.format
+      data: team.data
     )
     matches: state.matches.map((match) ->
       # Create all new object, mutating match breaks internal state
