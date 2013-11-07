@@ -374,6 +374,7 @@
           b:
             team: streamValue
             score: null
+          round: 0
         )
         propertyValue.matches = propertyValue.matches.union(newMatches.value())
 
