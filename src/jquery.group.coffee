@@ -186,6 +186,9 @@
   generateNewTeamId = () ->
     ++localTeamCounter
 
+  initLocalTeamCounter = (participants) ->
+    localTeamCounter = if participants.size() > 0 then participants.max("id").value().id else 0
+
   teamHover = ($container, enabled) ->
     () ->
       teamId = $(@).attr("data-teamid")
@@ -504,6 +507,8 @@
         it.a.team = opts.init.teams[it.a.team]
         it.b.team = opts.init.teams[it.b.team]
         it
+
+    initLocalTeamCounter(participants)
 
     group($('<div class="jqgroup"></div>').appendTo(container), participants, pairs, opts.save or null, labeler)
 
