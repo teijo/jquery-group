@@ -150,7 +150,7 @@
 
   matchEditTemplate = Handlebars.compile('
     <div data-matchid="{{id}}" class="match" draggable="{{draggable}}">
-      <div class="team" data-teamid="{{b.team.id}}">
+      <div class="team" data-teamid="{{a.team.id}}">
         <div class="label">{{a.team.label}}</div>
         <input type="text" class="score home {{homeClass}}" value="{{a.score}}" />
       </div>
