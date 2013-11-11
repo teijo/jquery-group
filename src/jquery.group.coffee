@@ -247,6 +247,8 @@
           participantStream.push
             id: generateNewTeamId()
             name: value
+            format: ""
+            data: {}
 
         markup.find("td.drop").asEventStream("click").map(".target").map($).map((el) ->
           el.attr("data-name")
@@ -383,6 +385,7 @@
         )
         propertyValue.matches = propertyValue.matches.union(newMatches.value())
 
+      streamValue.label = new Handlebars.SafeString(labeler(streamValue))
       propertyValue.participants.push streamValue
       rounds = roundCount(propertyValue.participants.size())
       _(_.range($rounds.find(".round").length - 1, rounds)).each (it) ->
@@ -502,7 +505,7 @@
     pairs  = _()
 
     if opts.init
-      participants = _(opts.init.teams).map((it) -> it.label = new Handlebars.SafeString(labeler(it)); it)
+      participants = _(opts.init.teams)
       pairs = _(opts.init.matches).map (it) ->
         it.a.team = opts.init.teams[it.a.team]
         it.b.team = opts.init.teams[it.b.team]
