@@ -235,13 +235,16 @@
           state.valid
         ).toProperty()
 
-        markup.find("input.name").asEventStream("change").filter(isValid).map(".target").map($).onValue (el) ->
+        inputChanges = (type) ->
+          markup.find("input." + type).asEventStream("change").filter(isValid).map(".target").map($)
+
+        inputChanges("name").onValue (el) ->
           renameStream.push
             id: parseInt(el.attr("data-teamid"))
             to: el.val()
           el.attr "data-prev", el.val()
 
-        markup.find("input.add").asEventStream("change").filter(isValid).map(".target").map($).map((el) ->
+        inputChanges("add").map((el) ->
           el.val()
         ).onValue (value) ->
           participantStream.push
@@ -282,22 +285,25 @@
           # events http://stackoverflow.com/a/10906204
           eventCounter = 0
 
-          r.asEventStream("dragover").doAction(".preventDefault").onValue((ev) -> )
-          r.asEventStream("dragenter").doAction(".preventDefault").map(evTarget)
+          round = (ev) ->
+            r.asEventStream(ev).doAction(".preventDefault")
+
+          round("dragover").onValue((ev) -> )
+          round("dragenter").map(evTarget)
             .onValue ($el) ->
               if eventCounter == 0
                 $el.addClass "over"
               eventCounter++
               return
 
-          r.asEventStream("dragleave").doAction(".preventDefault").map(evTarget)
+          round("dragleave").map(evTarget)
             .onValue ($el) ->
               eventCounter--
               if eventCounter == 0
                 $el.removeClass "over"
               return
 
-          r.asEventStream("drop").doAction(".preventDefault").map(evElTarget).onValues (ev, $el) ->
+          round("drop").map(evElTarget).onValues (ev, $el) ->
             eventCounter = 0
             id = ev.originalEvent.dataTransfer.getData("Text")
             obj = matchById(id)
@@ -323,11 +329,13 @@
           markup = templates.matchEdit(match)
           @markup = markup
 
-          markup.find("input").asEventStream("keyup").map(evTarget).onValue(($el) ->
-            $el.toggleClass "conflict", toIntOrNull($el.val()) is null
-          )
+          input = (ev) ->
+            markup.find("input").asEventStream(ev)
 
-          markup.find("input").asEventStream("change").onValue ->
+          input("keyup").map(evTarget).onValue ($el) ->
+            $el.toggleClass "conflict", toIntOrNull($el.val()) is null
+
+          input("change").onValue ->
             scoreA = toIntOrNull(markup.find("input.home").val())
             scoreB = toIntOrNull(markup.find("input.away").val())
             return if scoreA is null or scoreB is null
@@ -342,12 +350,16 @@
 
             resultStream.push update
 
-          markup.asEventStream("dragstart").map(".originalEvent").map(evElTarget).onValues (ev, $el) ->
+          drag = (ev) ->
+            (onval) ->
+              markup.asEventStream(ev).map(".originalEvent").map(evElTarget).onValues(onval)
+
+          drag("dragstart") (ev, $el) ->
             ev.dataTransfer.setData "Text", match.id
             $el.css "opacity", 0.5, ""
             $container.find(".round").addClass "droppable"
 
-          markup.asEventStream("dragend").map(".originalEvent").map(evElTarget).onValues (ev, $el) ->
+          drag("dragend") (ev, $el) ->
             $el.removeAttr "style"
             $container.find(".droppable").removeClass "droppable"
 
