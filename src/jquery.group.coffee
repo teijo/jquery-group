@@ -7,8 +7,8 @@
 
 (($) ->
   scoringScheme =
-    win: 3,
-    tie: 1,
+    win: 3
+    tie: 1
     loss: 0
 
   # 2n teams -> n-1 rounds, 2n+1 teams -> n rounds
